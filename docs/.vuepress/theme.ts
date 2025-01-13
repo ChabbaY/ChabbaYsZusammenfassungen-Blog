@@ -13,7 +13,7 @@ export default hopeTheme({
 
   logo: "https://bilder.chabbay.de/icon.png",
 
-  repo: "chabbay/ChabbaYsZusammenfassungen-Blog",
+  repo: "ChabbaY/ChabbaYsZusammenfassungen-Blog",
 
   docsDir: "docs",
 
