@@ -118,7 +118,7 @@ Beinhaltet ehemalige Kategorien **Insecure Direct Object References** und **Miss
   - zugewiesene Policies $\rightarrow$ beinhalten Attribute $\rightarrow$ Evaluation über Bool'sche Berechnung
   - auch "policy-based" (PBAC) oder "claims-based" (CBAC)
 
-### Angriffsmöglichkeiten
+### Angriffsmöglichkeiten von Access Control
 
 - Directory Traversal
   - **Local File**: durch bspw. "../" o.ä. wird eine lokale Datei wie /etc/passwd eingebunden
@@ -132,7 +132,7 @@ Beinhaltet ehemalige Kategorien **Insecure Direct Object References** und **Miss
 - Forced Browsing (bruteforce)
   - Testen von "Standard"-Verzeichnissen
 
-### Schutzmechanismen
+### Schutzmechanismen bei Access Control
 
 - **DRY** (don't repeat yourself): einmalige Implementierung + Vererbung
 - konfigurierbare Rollen
@@ -146,3 +146,116 @@ Beinhaltet ehemalige Kategorien **Insecure Direct Object References** und **Miss
   6. Reautorisierung oder sogar Reauthentifizierung bei wichtigen Aktionen
   7. Geeignetes **Framework** nutzen, kein eigener Code
   8. **Session Management** beachten, Autorisierung an Session koppeln
+
+### 08/2013 Cross Site Request Forgery
+
+Angreifer erzeugt gefälschten HTTP Request, der von Opfer übermittelt wird (Image Tags, XSS, ...)
+
+Wenn der Nutzer angemeldet ist, können Aktionen in dessen Namen ausgeführt werden:
+
+- Logout
+- Nachricht senden
+- Nutzer anlegen / löschen
+- Passwortänderung
+- Transfer von Geld / Daten
+
+#### Mögliche Verwundbarkeitstests
+
+- **Black Box Test**: Nachstellung eines Angriffs mit zwei Accounts
+- **Gray Box Test**: Werden nur Browserdaten (z.B. Cookies) für Authentifizierung / Autorisierung benötigt?
+
+#### Gegenmaßnahmen gegen CSRF
+
+- **Synchronizer Token** (auch CSRF Token)
+  - zufälliges Token für Benutzer-Session
+  - wird Formularen als "hidden" Parameter hinzugefügt
+  - HTTP Request muss Token beinhalten
+  - Server muss Token prüfen
+  - **Problem**: kann wegen GET-Request in Browser Historie auftauchen
+- **Double Submit Cookie**
+  - kryptografisch stark zufällig
+  - Cookie und "hidden" Parameter
+  - Server kann Wert berechnen
+  - Angreifer kann Cookie nicht auslesen
+- **Encrypted Token Pattern**
+  - Verschlüsselung von Informationen und Zufallswert (**NONCE**)
+  - Nutzer muss dies zurück übermitteln
+  - Server kann entschlüsseln und prüfen $\rightarrow$ UserID und Timestamp sollten als Schutz vor **Replay Angriffen** geprüft werden
+- **Custom Request Headers** (REST Services)
+  - eigener Header, z.B. X-Requested-With: XMLHttpRequest
+  - Same-Origin Policy
+    - nur JavaScript in der selben Domain (Same-Origin) könnte den Header hinzufügen
+    - Browser verbietet JavaScript über verschiedene Domains standardmäßig
+  - eingeschränkt empfohlen
+- **SameSite** Cookie Attribut
+  - Verhindert Zugriff auf Cookie bei CSRF
+- **HttpOnly** Attribut
+  - Verhindert Zugriff mit JavaScript, eingeschränkte Wirksamkeit
+- **Challenge Response**
+  - individuelle "Aufgabe", Lösung durch Client: CAPTCHA, Re-Authentication, One-Time-Token
+  - sehr wirkungsvoll, aber weder benutzerfreundlich noch barrierefrei
+- Maßnahmen des **Benutzers**
+  - Logout verwenden
+  - keine Anmeldedaten im Browser speichern
+  - keine Anmeldedaten in Seite speichern
+  - ggf. mehrere Browser für verschiedene Sicherheitslevel
+  - Deaktivierung von JavaScript im Browser
+
+## 02 Cryptographic Failures
+
+Unbeabsichtigte Offenlegung vertraulicher Informationen: Passwörter, personenbezogene Daten, Finanzdaten
+
+- **Kein Schutz**
+  - Speicherung im Klartext
+  - Verschlüsselte Speicherung aber Entschlüsselung bei jedem Zugriff (SQLI)
+  - Übertragung im Klartext (auch durch Downgrade-Attacke)
+  - Ungeschütztes Backup
+- **Kein ausreichender Schutz**
+  - Passwort-Hashes ohne Salz
+  - Verwendung schwacher Krypto-Algorithmen
+
+### Gegenmaßnahmen gegen Cryptographic Failures
+
+- Geeignete Speicherung: vertrauliche Daten **verschlüsselt** bzw. Passwörter **gehasht** (und gesalzen)
+- Reduzierung der gespeicherten vertraulichen Daten $\rightarrow$ "Data you don't have can't be stolen"
+- Falls möglich: **Hardware-Sicherheitsmodul** (HSM)verwenden
+- Starke Passwörter erzwingen
+- Keine Auto-Vervollständigung sensitiver Informationen
+
+### Sichere kryptographische Speicherung
+
+Nach OWASP "Cryptographic Storage Cheat Sheet"
+
+- 1: **nur benötigte** Daten speichern
+- 2: Verwendung **starker** kryptografischer Algorithmen
+  - AES, RSA, SHA-256, CCM, GCM
+  - <ins>NICHT</ins>: MD5, SHA1
+  - kann sich ändern, auf Empfehlungen des BSI achten
+  - Seed muss genügend **Entropie** haben
+  - nur bekannte und anerkannte Implementierungen verwenden
+- 3: Passwörter in **mehreren Iterationen** hashen und salzen
+  - pbkdf2, bcrypt, scrypt, argon2
+- 4: **Sicherheit** muss **immer gewährleistet** sein (principle of defense in depth)
+  - verschiedene Layer von Security
+- 5: Geheime **Schlüssel** vor unbefugtem Zugriff **schützen**
+  - Key Lifecycle (regelmäßiges Rekeying, max. nach einem Jahr "umschlüsseln")
+  - nicht am selben Ort wie Daten speichern
+  - bei mehreren Schlüsseln: Unabhängigkeit
+  - an sicherem Ort
+  - Menge pro Schlüssel limitieren
+  - Prozedur bei kompromittiertem Schlüssel dokumentieren
+
+### Verwendung von SSL / TLS (by Design)
+
+Nach OWASP "Transport Layer Protection Cheat Sheet"
+
+- 1: für **alle Seiten** aktivieren
+- 2: bei vertraulichen Daten auch in internen Netzen
+- 3: wenn SSL / TLS zur Verfügung steht, dann **erzwingen**
+- 4: ausschließlich Inhalte über SSL / TLS einbinden
+- 5: **Secure Cookie Flag** verwenden: Übertragung nur per SSL / TLS
+- 6: keine sensitiven Daten **in URLs**
+- 7: **Kein Caching** sensitiver Daten
+- 8: **HTTP Strict Transport Security** (HSTS) nutzen
+  - erzwungenes https
+  - ungültige Zertifikate können nicht akzeptiert werden
