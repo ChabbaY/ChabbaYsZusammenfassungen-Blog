@@ -259,3 +259,149 @@ Nach OWASP "Transport Layer Protection Cheat Sheet"
 - 8: **HTTP Strict Transport Security** (HSTS) nutzen
   - erzwungenes https
   - ungültige Zertifikate können nicht akzeptiert werden
+
+#### Certificate Transparency (CT)
+
+- unveränderbares Logfile, das alle ausgestellten **Zertifikate** einer **CA** (Certificate Authority) enthält
+
+#### Certificate Authority Authorization (CAA)
+
+- **DNS-Eintrag**, wer zu einer Domäne Zertifikate erstellen darf
+
+#### SSL / TLS Server-Zertifikate
+
+- nur geschützte, **starke Schlüssel**
+- **geeignete CA** verwenden
+- Fully Qualified Domain Names (**FQDN**) in DNS verwenden
+- keine Wildcard-Zertifikate (Verstoß gegen "least privilege principle")
+- keine lokalen IP-Adressen als FQDN oder Subject Alternate Names (SAN) verwenden
+- alle benötigten Zertifikate zur Validierung sollen ausgeliefert werden
+
+#### SSL / TLS Protokolle und Chiffren
+
+- nur kryptografisch **starke Protokolle** & Chiffren bzw. **Cipher Suites** (Kombination kryptographischer Verfahren) verwenden
+  - AES, 3-key 3DES, CBC mode
+  - AES/CTR
+  - SHA2
+  - Ephemeral Diffie-Hellman für Schlüsselaustausch
+- <ins>NICHT</ins>:
+  - Cipher Suites ohne Authentication (NULL, aNULL, eNULL)
+  - Anonymous Diffie-Hellman (ADH)
+  - Export Level Cipher (EXP)
+  - Schlüssellänge < 128 Bit
+  - MD5
+- flüchtige Session-Keys verwenden $\rightarrow$ **Perfect Forward Secrecy** (PFS)
+- Schwächen des TLS vermeiden
+  - Kompression abschalten (exploitbar)
+  - TLS Renegotiation abschalten bzw. Secure Renegotiation verwenden (expolitbar)
+- aktuelle Versionen verwenden
+
+## 03 Injection-Angriffe
+
+Umfasst seit 2021 auch Cross Site Scripting (XSS)
+
+- **SQL Injection**
+- Format String
+- Command Injection
+- Log Injection
+- Reflection Injection
+- Interpreter Injection
+- **eXternal XML Entities** ($\rightarrow$ Security Misconfiguration)
+- XSS (**stored, reflected, dom-based, mutated**)
+
+### SQL Injection
+
+Wenn dynamische Datenbank-Abfrage mit (ungeprüfter) Benutzereingabe gebildet wird
+
+- kann Logik der Abfrage ändern
+- kann Datenbank beschädigen (Inhalte löschen) oder vertrauliche Daten preisgeben
+
+#### Beispiele
+
+- `'` $\rightarrow$ Fehler 500 (Syntaxfehler wegen zusätzlichem Anführungszeichen) $\rightarrow$ verwundbar für SQL Injection
+- `' OR 'x'='x` $\rightarrow$ kann bei einem SELECT alle Elemente selektieren
+- `' AND email IS NULL;--` $\rightarrow$ wird nie wahr, aber falls kein Fehler 500 kommt existiert das Feld, hier _email_
+- `' AND 1=(SELECT COUNT(*) FROM tabname);--` oder `' AND member.email is NULL` $\rightarrow$ ebenfalls Erraten eines Feldnamen
+- `' OR full_name LIKE '%Alice%` $\rightarrow$ Überprüfung auf teilweise Übereinstimmung
+- `alice@example.com' AND passwd='geraten` $\rightarrow$ Erraten eines Passworts
+- `'; DROP TABLE members; --` $\rightarrow$ beliebiges eigenes Statement durch Konkatenation
+- **UNION ALL**: Vereinigung anderer Tabelle, auch mit unterschiedlichen Datentypen, lediglich Spaltenanzahl muss gleich sein
+- **LOAD_FILE()**: kann lokale Datei ausgeben, wenn diese für alle Benutzer lesbar ist
+- **INTO OUTFILE()**: schreibt Ergebnis in Datei, Verzeichnis muss schreibbar sein
+- **LIMIT** position, anzahl: auch wenn nur das erste Element gezeigt wird, ist Iteration möglich
+
+#### Blind SQL Injection
+
+- **Partially Blind Injection**: leicht abweichendes Verhalten bei Erfolg / Misserfolg
+- **Totally Blind Injection**: kein Unterschied in Ausgabe, Erfolg nur schwer feststellbar
+
+Hier kann das Zeitverhalten ausgenutzt werden
+
+- MySQL:
+
+```sql
+UNION ALL SELECT BENCHMARK(1000000, MD5(CHAR(118)))
+```
+
+- MSSQL:
+
+```sql
+WAITFOR DELAY '0:0:10'--
+```
+
+- PostgreSQL:
+
+```sql
+SELECT pg_sleep(10);
+```
+
+#### Vermeidung von SQL Injection
+
+- **Safe API** / ORM Tools
+  - parametrisiertes Interface oder objektrelationales Mapping
+- **Server Side Input Validation** (Whitelisting)
+  - nicht immer möglich
+  - gut geeignet für strukturierte Daten wie E-Mail-Adressen oder Telefonnummern
+- **Prepared Statements** (Parameterized Queries)
+  - Platzhalter werden validiert und befüllt
+  - Unterschied zwischen Code und Daten klar sichtbar
+  - können anfällig sein
+- **Stored Procedures**
+  - Vorkompilierter Code in Datenbank
+  - Lediglich Übergabe von Funktionsname und Parametern, auch hier Unterschied zwischen Code und Daten klar
+  - können anfällig sein, wenn dynamisches SQL erzeugt wird
+- **Escaping** von Benutzereingaben
+  - nur für Legacy Code wenn Änderung zu aufwendig oder Performance Probleme
+  - vorhandene Bibliotheken nutzen, da Implementierung sehr schwierig
+
+Zusätzlich sollte das **Least Privilege Principle** angewandt werden: nur minimale Rechte vergeben um möglichen Schaden zu begrenzen
+
+### 07/2017 Cross Site Scripting
+
+Gefährdung wenn Input (von Benutzer oder Datenbank) in dynamische Inhalte eingebunden wird, die an den Browser eines Benutzers gesendet werden
+
+Verschiedene Arten:
+
+- Drive-By
+  - **Stored XSS**: feindlicher Code wird permanent auf Server gespeichert (Datenbank, Forum, Kommentare, ...) $\rightarrow$ wird an alle Clients verteilt
+- Social Engineering
+  - **Reflected XSS**: feindlicher Code wird reflektiert durch Fehlermeldungen, Suchergebnisse, etc.
+    - über Link in E-Mail oder anderen Webserver
+  - **DOM-based XSS**: Manipulation des DOM beim Opfer $\rightarrow$ Nutzung des originalen Codes auf unbeabsichtigte Weise
+    - im Gegensatz zu Stored / Reflected lediglich Änderungen im Client
+- **Mutation XSS** (mXSS)
+
+#### Gegenmaßnahmen zu Stored / Reflected XSS
+
+- nie nicht-vertrauenswürdige Daten einfügen (außer erlaubte Bereiche)
+- **Escaping** von User Input
+- **HTML Policy Engine**: Bereinigung von User Input
+
+#### Gegenmaßnahmen zu DOM-based XSS
+
+- Encoding und dessen Reihenfolge beachten
+- Vorsichtiges Vorgehen beim Einfügen von JavaScript
+- nicht-vertrauenswürdige Daten immer als darstellbaren Text behandeln
+- Vermeidung gefährlicher Methoden wie implizites eval()
+  - direktes Setzen von HTML Code: element.innerHTML, document.write(), ...
+- Verständnis für Datenfluss
