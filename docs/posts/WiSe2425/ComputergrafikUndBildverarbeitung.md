@@ -30,6 +30,13 @@ Bildverarbeitung ist die Aufbereitung eines Bildes, die Generierung einer abstra
 - mit harter Echtzeit (min. 60 Hz / fixe Deadlines) oder weicher Echtzeit
 - Bildverarbeitung: Qualitätskontrolle, Robotik, Überwachung, Medizin, autonomes Fahren, Kriminilogie, Photographie, Multimedia, Wettervorhersage, Astronomie, Archäologie, Militär
 
+### Fragestellungen zur Einleitung
+
+- Wie hängen CG und BV zusammen?
+- Wie entsteht ein Farbeindruck aus einem Farbreiz?
+- Nennen Sie Anwendungsgebiete für CG/BV
+- Aufgabe: Projektion eines Objekts auf Bildebene einzeichnen
+
 ## Bildverarbeitung
 
 Bild als Funktion s
@@ -47,4 +54,130 @@ Bildarten: Binärbilder, Grauwertbilder und Farbbilder
 
 Kanal als letzter Eintrag im Tupel für Referenzierung einzelner Farbwerte:
 
-$s(x,y,n) = g,g \in G$
+$$s(x,y,n) = g,g \in G$$
+
+### Statistische Größen
+
+- Extraktion aussagekräftiger Merkmale als Vorverarbeitung
+- Visualisierung anwendungsbezogener Bildeigenschaften
+- für das Bild $S = s(x,y,n)$, hier nur Grauwertbild
+
+#### Mittelwert
+
+Durchschnittshelligkeit (pro Kanal)
+
+$$m_S = {1 \over L~\cdot~R} \sum _{x=0}^{L-1} \sum _{y=0}^{R-1} s(x,y)$$
+
+#### Quadratische Abweichung
+
+Variation / Lebhaftigkeit (pro Kanal)
+
+$$q_S = {1 \over L~\cdot~R} \sum _{x=0}^{L-1} \sum _{y=0}^{R-1} (s(x,y) - m_S)^2$$
+
+#### Relative Häufigkeit
+
+Beschreibung von Helligkeitsverteilungen
+
+$$p_S(g_0,...,g_{N-1}) = {a_{g_0,...,g_{N-1}} \over L~\cdot~R}, g_n \in G$$
+
+#### Histogramme
+
+Darstellung der Relativen Häufigkeit
+
+Charakterisierung von **Beleuchtung** und **Dynamik**:
+
+![Dynamik in Histogrammen](img/histogramme-dynamik.png)
+
+Bei zwei lokalen Maxima $\rightarrow$ **Bimodales Histogramm** $\rightarrow$ Segmentierung möglich
+
+#### Relative Summenhäufigkeit
+
+Kumulative Relative Häufigkeit
+
+$$h_S(g) = \sum _{i=0}^g p_S(i), g \in G$$
+
+#### Co-Occurence-Matrix
+
+- mit einer **Relation** $r$ (z.B. "rechter Nachbar")
+- zählt Häufigkeiten von Wertkombinationen
+- Eintragung bei Spalten- und Zeilenindex der Wertkombination, z.B. 2 "rechter Nachbar" 3 in Zeile mit Index 2 und Spalte mit Index 3
+- Die **Hauptdiagonale** entspricht **homogenen** Bereichen, starke Besetzung der linken unteren und rechten oberen **Ecke** bedeuten viel **Kontrast**
+- Einsatz in **medizinischer Bildverarbeitung**
+- **Haralick Features**: 14 Merkmale aus Co-Occurence-Matrix
+- Für Richtungsinvarianz: Rotation der Relation und anschließende Mittelung
+
+### Fragestellungen zu Digitalen Bildern
+
+- Was ist ein bimodales Histogramm?
+- Was kann man im Histogramm erkennen?
+- Wozu lässt sich die Co-Occurrence nutzen?
+
+- Aufgabe: Berechnung statistischer Größen (z.B. Relative Häufigkeiten, Histogramm, ...) für ein Bild mit gegebener Grauwert-Matrix
+- Aufgabe: gg. Grauwertbilder $\rightarrow$ Histogramme zuordnen
+- Aufgabe: gg. Histogramm $\rightarrow$ Beleuchtung und Dynamik zuordnen
+- Aufgabe: gg. Grauwertbild, Relation $\rightarrow$ Co-Occurrence Matrix berechnen
+
+### Punktoperationen
+
+Modifikation der Bildpixel (Grauwerte $G = \{0, ..., 255\}$) ohne Berücksichtigung der Umgebung, ist Funktion, die Eingabebild $S_e$ auf Ausgabebild $S_a$ abbildet
+
+- bessere bildliche Reproduktionsqualität bei der **Videodigitalisierung**
+- für Ausdrucke mit weniger als 256 Graustufen
+
+#### Lineare Skalierung
+
+$$f(g) = (g + c_1) \cdot c_2 = c_2 g + c_1 c_2$$
+
+- $c_1 < 0$: dunkler, Histogramm nach links
+- $c_1 > 0$: heller, Histogramm nach rechts
+- $0 < c_2 < 1$: weniger Kontrast, Histogramm gestaucht
+- $c_2 > 1$: mehr Kontrast, Histogramm gestreckt
+- $c_1 = 0, c_2 = 1$: Identitätsabbildun
+
+Grauwerte < 0 und > 255 werden abgeschnitten, dadurch gehen ggf. Informationen verloren
+
+Anpassung für bessere Ergebnisse:
+
+$$f(g) = c_2(g - 128) + 128 + c_1$$
+
+Dadurch "dreht" die Multiplikation um den Ursprung
+
+Für **Falschfarbendarstellung** oder eine **Beschleunigung** der Berechnung kann eine **Lookup-Tabelle** eingesetzt werden: Zuordnung Grauwert $\rightarrow$ Grauwert
+
+#### Äquidensiten
+
+Eine stückweise konstante Skalierung
+
+- **1\. Ordnung**: Direktes Ergebnis mit Flächendarstellung
+- **2\. Ordnung**: Nur die Ränder der Flächen werden dargestellt
+- **Gemischte Ordnung**: Sowohl Flächen als auch Ränder werden dargestellt
+
+Grenzen können aus Relativer Summenhäufigkeit abgeleitet werden $\rightarrow$ **Randerkennung**
+
+Problem: **Rauschanfälligkeit**
+
+Spezialfall: Binär- (0 und 255) oder Zweipegelbild (2 beliebige Graustufen)
+
+- Anwendung in der **Segmentierung**
+- **Binarisierung** über Schwellenwert, der automatisch ermittelt werden kann
+
+#### Histogrammlinearisierung
+
+Skalierungsfunktion, die dafür sorgt, dass $g$ **gleichverteilt** ist und den gesamten Wertebereich füllt (effizient mit Lookup-Tabelle da keine Parameter)
+
+$$f_n(g) = 255 \cdot h_S(g)$$
+
+- mehr **Kontrast** (in dunklen und in hellen Bereichen), hilfreich bei kontrastarmen Bildern
+- feine **Bildstrukturen** sind besser sichtbar
+- mittlere Grauwerte nahezu unverändert
+- Problem: **sichtbares Rauschen** in hellen Bildbereichen
+
+### Fragestellungen zu Punktoperationen
+
+- Wie lassen sich bei der linearen Skalierung entstehende Grauwerte > 255 behandeln?
+- Wie wirkt sich ein c_2 > 1 auf das resultierende Grauwerthistogramm aus?
+- Was ist die Folge des Abschneidens von Werten > 255?
+- Warum gilt bei einem Ausgabebild, das alle Grauwerte enthält, nicht exakt p_s(g)=1/256?
+- Für welche Bilder eignet sich Histogrammlinearisierung nicht?
+- Aufgabe: gg. Bilder von Äquidensiten $\rightarrow$ Zuordnung der Ordnung
+- Aufgabe: gg. Eingabebild, linear skaliertes Bild $\rightarrow$ Zuordnung
