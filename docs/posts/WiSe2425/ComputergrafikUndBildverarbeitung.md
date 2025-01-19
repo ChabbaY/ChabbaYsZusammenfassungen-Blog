@@ -181,3 +181,32 @@ $$f_n(g) = 255 \cdot h_S(g)$$
 - Für welche Bilder eignet sich Histogrammlinearisierung nicht?
 - Aufgabe: gg. Bilder von Äquidensiten $\rightarrow$ Zuordnung der Ordnung
 - Aufgabe: gg. Eingabebild, linear skaliertes Bild $\rightarrow$ Zuordnung
+
+### Lineare Filter
+
+Im Gegensatz zu Punktoperationen **Einbezug der Umgebung** (Nachbarpixel) $\rightarrow$ lineare Abhängigkeit (gewichtete Summe) von seinen Nachbarn
+
+Operationen **im Ortsbereich** (vs. im Frequenzbereich)
+
+Anwendung in:
+
+- **Vorverarbeitungsschritten** bspw. vor Segmentierung
+- **Rauschunterdrückung** (Videosequenz / einfache Bilder)
+- **Hervorhebung von Kanten**
+- als Teil eines **Neuronalen Netzes** zur Erkennung von Bildinhalten
+
+#### Bewegter Mittelwert
+
+$$s'(x,y) = {1 \over 9} \sum _{u=-1}^{+1} \sum _{v=-1}^{+1} s(x-u, y-v)$$
+
+### Fragestellungen zu Linearen Filtern
+
+- Was ist der Unterschied zwischen linearen und nichtlinearen Filtern?
+- Welchen Vorteil bietet die Filtereigenschaft der Separierbarkeit?
+- Was versteht man unter dem Grauwertgradient? Wozu kann er verwendet werden?
+- Was passiert bei der Bildschärfung, wenn der Parameter c einen Wert kleiner 1 annimmt?
+- Warum ist der Laplace-Filter richtungsunabhängig?
+- Aufgabe: gg. Grauwertbild (Matrix), Filterkern $\rightarrow$ Ergebnis
+- Aufgabe: gg. Grauwertbild (Matrix) $\rightarrow$ Bewegter Mittelwert
+- Aufgabe: gg. Gefiltertes Grauwertbild $\rightarrow$ Filter
+- Aufgabe: gg. Filterkernel $\rightarrow$ Glättungs- oder Differenzoperator?
