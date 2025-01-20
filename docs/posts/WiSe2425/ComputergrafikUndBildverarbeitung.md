@@ -199,6 +199,92 @@ Anwendung in:
 
 $$s'(x,y) = {1 \over 9} \sum _{u=-1}^{+1} \sum _{v=-1}^{+1} s(x-u, y-v)$$
 
+#### Diskrete Faltung und Korrelation
+
+Lineare Filter werden als Diskrete Faltung umgesetzt:
+
+- **Flippen** des Filterkernels horizontal und vertikal bzw. Punktspiegelung bzw. Rotation um 180 Grad
+- Korrelation ist ohne das Flippen, daher sind die **Vorzeichen** in der Formel vertauscht
+
+**Diskrete Faltung**:
+
+$$s'(x,y) = \sum _{u=-k}^{k} \sum _{v=-k}^{k} s(x-u, y-v)$$
+
+**Korrelation**:
+
+$$s'(x,y) = \sum _{u=-k}^{k} \sum _{v=-k}^{k} s(x+u, y+v)$$
+
+Im Gegensatz zum Bewegten Mittelwert wird dabei der Mittelwert nicht erhalten. Dies kann durch einen Vorfaktor $1 \over m^2$ erreicht werden. $m^2$ muss dabei der Summe der Filterkoeffizienten entsprechen.
+
+#### Randpixelergänzung
+
+3 verschiedene Strategien möglich
+
+- Zero-Padding
+- Extrapolation
+- Zyklische Fortsetzung
+
+#### Separierbarkeit
+
+Anwendung eines linearen Filters in $O(2m)$ statt $O(m^2)$
+
+Gegeben wenn Filterkern als **äußeres Produkt** geschrieben werden kann, separierte Filterkerne werden nacheinander angewandt
+
+Beispiel **Bewegter Mittelwert**:
+
+$${1 \over 9} \begin{pmatrix}1 & 1 & 1 \\ 1 & 1 & 1 \\ 1 & 1 & 1\end{pmatrix} = {1 \over 3} \begin{pmatrix}1 \\ 1 \\ 1\end{pmatrix} \cdot {1 \over 3} \begin{pmatrix}1 & 1 & 1\end{pmatrix}$$
+
+Beispiel **Gauß Weichzeichner**:
+
+$${1 \over 16} \begin{pmatrix}1 & 2 & 1 \\ 2 & 4 & 2 \\ 1 & 2 & 1\end{pmatrix} = {1 \over 4} \begin{pmatrix}1 \\ 2 \\ 1\end{pmatrix} \cdot {1 \over 4} \begin{pmatrix}1 & 2 & 1\end{pmatrix}$$
+
+Separierbarkeit gegeben, wenn **Rang** der Matrix 1 (alle Spalten- / Zeilenvektoren linear abhängig)
+
+#### Arten linearer Filter
+
+- **Summen-** oder **Glättungsoperatoren** (**nur positive** Werte im Filterkern)
+  - Glättung
+    - **Box-Filter** (schlecht): scharf abfallende Ränder, gleiches Gewicht überall, keine Isotropie (Auswirkung sollte in alle Richtungen gleich sein)
+    - **Gauß Filter** (bzw. Gauß-Weichzeichner): diskrete Approximation der Gauß-Glockenkurve, gutes Frequenzverhalten, Isotrop für Filtermasken mit $m > 4$
+- **Differenzoperatoren** (auch negative Werte im Filterkern)
+
+#### Unsharp Masking
+
+Es wird die Differenz aus einem Bild und seinem weichgezeichneten Bild gebildet, mit einem Faktor $c$ multipliziert und auf das Bild addiert
+
+$c = 1$ ist der Standard, ein größerer Wert verursacht "Highboost-Filtering", ein kleinerer reduziert den **Einfluss** der Maske
+
+#### Grauwertgradient
+
+Partielle Ableitungen nach x- und y-Richtung
+
+$$grad(s) = \begin{pmatrix}{\delta s(x,y) \over \delta x} \\ {\delta s(x,y) \over \delta y}\end{pmatrix}$$
+
+Betrag:
+
+$$\sqrt{\begin{pmatrix}{\delta s(x,y) \over \delta x}\end{pmatrix}^2 + \begin{pmatrix}{\delta s(x,y) \over \delta y}\end{pmatrix}^2}$$
+
+Richtung:
+
+$$arctan \begin{pmatrix}{{\delta s(x,y) \over \delta y} \over {\delta s(x,y) \over \delta x}}\end{pmatrix}$$
+
+Können per **Differenzoperatoren** berechnet werden
+
+#### Differenzoperatoren
+
+- **Sobel Operator**
+  - Differenzbildung zur übernächsten Spalte / Zeile $\rightarrow$ **weniger Störungsanfälligkeit**
+  - **Rauschminderung** durch Mittelung quer zum Gradienten
+  - **Richtungsabhängigkeit**: nur horizontale und vertikale Kanten können erkannt werden
+
+$$H_x = \begin{pmatrix}1 & 2 & 1 \\ 0 & 0 & 0 \\ -1 & -2 & -1\end{pmatrix}~~~~H_y = \begin{pmatrix}1 & 0 & -1 \\ 2 & 0 & -2 \\ 1 & 0 & -1\end{pmatrix}$$
+
+- **Laplace-Operator**
+  - richtungsunabhängiger Operator (punktsymmetrisch)
+  - etwas anfälliger ggü. Bildstörungen
+
+$$H = \begin{pmatrix}0 & -1 & 0 \\ -1 & 4 & -1 \\ 0 & -1 & 0\end{pmatrix}~~oder~~H = \begin{pmatrix}-1 & -1 & -1 \\ -1 & 8 & -1 \\ -1 & -1 & -1\end{pmatrix}$$
+
 ### Fragestellungen zu Linearen Filtern
 
 - Was ist der Unterschied zwischen linearen und nichtlinearen Filtern?
