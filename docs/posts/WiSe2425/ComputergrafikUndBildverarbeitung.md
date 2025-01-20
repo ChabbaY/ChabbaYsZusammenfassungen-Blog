@@ -296,3 +296,51 @@ $$H = \begin{pmatrix}0 & -1 & 0 \\ -1 & 4 & -1 \\ 0 & -1 & 0\end{pmatrix}~~oder~
 - Aufgabe: gg. Grauwertbild (Matrix) $\rightarrow$ Bewegter Mittelwert
 - Aufgabe: gg. Gefiltertes Grauwertbild $\rightarrow$ Filter
 - Aufgabe: gg. Filterkernel $\rightarrow$ Glättungs- oder Differenzoperator?
+
+### Nichtlineare Filter
+
+Keine lineare Abhängigkeit von Nachbarpixeln
+
+#### Morphologische Operatoren
+
+Änderung der äußeren Form von Bildstrukturen durch "Schrumpf"- und "Wachs"-Operationen
+
+- Selektive Entfernung störender Bildstrukturen
+- Füllen von "Löchern" in Binärbildern
+- Qualitätskontrolle, OCR
+
+**Strukturierendes Element** $K$ beschreibt, welche Bildpunkte "Nachbarn" sind
+
+Operatoren
+
+- **Dilatation** ("Wachsen"): kommutativ und assiozativ
+- **Erosion** ("Schrumpfen"): nicht kommutativ aber assoziativ
+- **Opening** (Erosion $\rightarrow$ Dilatation): entfernt kleine Bildstrukturen
+- **Closing** (Dilatation $\rightarrow$ Erosion): füllt Löcher und Zwischenräume
+
+Dilatation und Erosion sind **nicht zueinander invers**, aber **dual**: Dilatation des Vordergrundes $==$ Erosion des Hintergrundes. Beide sind **idempotent**: eine weitere Anwendung würde nichts mehr ändern
+
+Bei **Grauwertbildern** werden Rangordnungsoperatoren eingesetzt: die Nachbarn aus dem strukturierenden Element werden nach Größe sortiert
+
+- **Dilatation**: Das Maximum wird der neue Wert
+- **Erosion**: Das Minimum wird der neue Wert
+
+Operatoren haben gleiche Eigenschaften wie bei Binärbild, auch Opening und Closing
+
+Anwendung
+
+- Gezielte Extraktion von Formen: Opening / Closing, Ergebnis vom Original subtrahieren
+- Exraktion von Kanten / Linien: Closing & Subtraktion vom Original
+
+#### Median-Filter
+
+Es wird immer der Median aller Nachbarswerte gewählt
+
+So kann **Salt-and-Pepper-Rauschen** reduziert werden
+
+### Fragestellungen zu Nichtlinearen Filtern
+
+- Ist die Erosion kommutativ?
+- Mit welchem Operator lassen sich kleine Bildstrukturen entfernen?
+- Aufgabe: Wenden Sie das strukturierende Element x auf Grauwert/Binärbild y mit Operator z an.
+- Aufgabe: gg. Grauwertbild $\rightarrow$ Welcher Operator wurde angewandt?
