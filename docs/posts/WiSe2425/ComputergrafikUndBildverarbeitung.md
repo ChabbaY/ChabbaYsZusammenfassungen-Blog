@@ -392,6 +392,47 @@ Eigenschaften
 - **komplexwertig**
 - Multiplikation im **Ortsraum** $==$ Faltung im **Frequenzraum**
 
+**Leistungsspektrum** (auch Betragsspektrum / Amplitudenspektrum)
+
+- periodisch und symmetrisch zum Ursprung
+- **Zentrierte Darstellung des Ursprungs** $\rightarrow$ niedrige Wellenzahlen im Zentrum
+- **Skalierung** auf **quadratische Größe** $\rightarrow$ Richtungswinkel in Bild und Spektrum identisch
+- Windowing
+  - Bild wird an Rändern wiederholt, damit es **periodisch** ist $\rightarrow$ **abrupte Übergänge** möglich
+  - Lösung: Multiplikation mit Fensterfunktion, die Übergänge weicher macht (dadurch gehen jedoch Informationen verloren)
+  - bei einem steileren Abfall am Rand bleiben zwar mehr Informationen erhalten, aber das Spektrum wird breiter ("verwischt") und "Periodizitätsartefakte" werden stärker
+- Skalierung
+  - umgekehrter Effekt im Spektralraum
+- Translation
+  - kein Effekt im Spektralraum
+- Rotation
+  - Rotation im Spektralraum mit gleichem Winkel
+- Periodische Bildmuster
+  - isolierte Maxima im Frequenzraum
+- Gerichtete, längliche Strukturen
+  - breite Streifen im Frequenzraum, orthogonal zu Orientierung im Bild
+- Natürliche Muster
+  - kaum gerade, künstliche Strukturen, weniger deutliche Ausprägung im Spektralraum
+- Druckraster
+  - klar erkennbare Maxima in Spektralraum
+
+Orts- und Frequenzbereich
+
+- $FT$: Ortsbereich $\rightarrow$ Frequenzbereich
+- $FT^{-1}$: Frequenzbereich $\rightarrow$ Ortsbereich
+
+Faltungssatz
+
+Multiplikation im Ortsbereich $==$ Faltung im Frequenzbereich $\rightarrow$ effizienteres Anwenden von Filtern (wenn Bild groß genug, dass notwendige FT nicht ins Gewicht fällt)
+
+- **Tiefpassfilter** (nur niedrige Frequenzen werden beibehalten, Filter ist Kreis im Zentrum des Spektralraums): Herausfilterung klarer Kanten, wird verschwommen
+- **Hochpassfilter** (nur hohe Frequenzen werden beibehalten, Kreis im Zentrum des Spektralraums wird herausgefiltert): Flächen verschwinden aber Kanten bleiben stehen
+- **Filterkeil** (nur Keil auf Achse wird beibehalten): Kanten ortogonal zur gegebenen Achse bleiben übrig, sonst nichts
+
+Inverse Filterung
+
+- kann Unschärfe entfernen
+
 ### Fragestellungen zur Fouriertransformation
 
 - DFT: Wie wird mit nicht-periodischen diskreten Funktionen umgegangen? Welche Probleme entstehen? Welche Lösungen gibt es?
