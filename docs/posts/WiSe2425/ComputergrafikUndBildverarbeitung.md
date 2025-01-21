@@ -443,7 +443,126 @@ Inverse Filterung
 - Aufgabe: Zuordnung gefiltertes Bild zu Frequenzspektrum
 - Aufgabe: Zuordnung Übertragsfunktion zu gefiltertem Bild
 
-### Klassifikation und Segmentierung
+### Klassifikation
+
+Zuordnung eines **Klassenlabels** zu einem Bild anhand bestimmter **Merkmale**
+
+- Statistische Größen (Mittelwert, Histogramm, Co-Occurence-Matrix, ...)
+- Farbe
+- Fourier-Koeffizienten
+- Muster und Kanten
+- ...
+
+Arten **maschinellen Lernens**:
+
+- **Überwachtes Lernen**: Training mit Stichprobe aus Trainingsdaten
+- **Unüberwachtes Lernen**: Ableitung von Klassenlabels aus Struktur der Daten (z.B. Clustering)
+
+#### Überwachtes Lernen
+
+- **Minimum-Distance-Klassifikator** (MDK)
+  - Zentren der Klassen werden durch Training berechnet
+  - Zuordnung zum nächsten Zentrum
+  - Darstellung in Voronoi-Diagramm
+- **Nächste-Nachbarn-Klassifikator** (NNK)
+  - Zuordnung zum nächstliegenden Merkmalsvektor
+  - Darstellung in Voronoi-Diagramm
+
+Der Unterschied zwischen Prädiktion $\^y$ und Erwartung $y$ wird mit der **Loss-Funktion** bestimmt
+
+- wenn nur Klassenlabel prediziert wird: **Hinge-Loss**
+- wenn zu jedem Label die Wahrscheinlichkeit prädiziert wird: **Kreuzentropie-Loss**
+
+Training wird zu **Optimierungsproblem** mit dem Ziel die **Kostenfunktion** zu minimieren
+
+#### Neuronale Netze
+
+Abstrakte und vereinfachte Umsetzung biologischer Neuronen, haben flexible Struktur $\rightarrow$ können jede Funktion approximieren
+
+Basiselement **Perzeptron**
+
+- Aktivierungsfunktionen $A$: nichtlinearität
+  - in den inneren Schichten meist **ReLU**, da sehr einfach zu berechnen
+  - für letzte Schicht **Softmax**: Summe der Wahrscheinlichkeiten wird 1
+- Bias-Neuronen $B$: konstant (meist 1), Verschiebung der Aktivierungsfunktion für besseres Fitting
+- Loss-Funktion $L$: Kreuzentropie-Loss
+
+Im Lernprozess: **Gradient Descent**
+
+- Minimierung der Kostenfunktion: Gradient gibt Richtung des steilsten Anstiegs an $\rightarrow$ Bewegung in Gegenrichtung um Lernrate $\eta$ bis keine Verbesserung mehr
+- zu Verwendung aller Trainingsdaten (**Batch Gradient Descent**) effizientere Variante mit Teilmenge der Trainingsdaten (**Mini-batch Gradient Descent**)
+- Verwendung auch in effizientem Verfahren Adaptive Moment Estimation (**ADAM**)
+- die partiellen Ableitungen können mit **Reverse-Mode AutoDiff** gebildet werden, in Kombination mit Gradient Descent spricht man von **Backpropagation**
+
+**CNNs** (Convolutional Neural Networks)
+
+Für "automatische" Merkmalsextraktion aus Bildern, inspiriert vom visuellen Kortex, wo Neuronen nur für bestimmten Bereich des Sichtfeldes "feuern"
+
+Reihung von Merkmalskarten (Feature-Maps) die vom Detail ins Allgemeine gehen, dabei jeweils ReLU-Aktivierung und Pooling, am Ende "Flatten-Schicht" für die Klassifikation
+
+- **Convolution**
+  - es wird korreliert (aber von Faltung gesprochen)
+  - **Padding**: Randbedingung
+  - **Stride**: Schrittweite größer 1 für ein kleineres Ergebnis
+  - Summenbildung aller Kanäle mit kanalspezifischem Bias
+- **Pooling**
+  - Unterabtastung $\rightarrow$ Betrachtungsfenster wird auf einzelnen Wert reduziert
+  - Reduzierung von Komplexität, Ermöglichung von Translationsinvarianz
+  - Startegien
+    - Max-Pooling (maximaler Wert)
+    - Average-Pooling (Durchschnittswert)
+- **Flatten**
+  - erzeugt eindimensionales Array
+
+Eigenschaften
+
+- Gewichte werden pro Kanal geteilt (**Weight Sharing**)
+- Translationsäquivarianz und Translationsinvarianz
+- Nutzen Korrelation zwischen Umgebungspixeln (**Lokalität**)
+- oft mehrere Convolution-/Pooling-Schichten
+
+#### Transfer Learning
+
+Beschleunigtes Lernen einer neuen Aufgabe durch Nutzen eines **vortrainierten Netzes**
+
+1. geeignetes Netz identifizieren
+2. hintere Layer löschen bspw. die Klassifikation
+3. neue Layer anfügen und Lernprozess mit vortrainierten Parametern beginnen
+
+Existierende Parameter können
+
+- unverändert bleiben (**Freezing**)
+  - vermeidet **Overfitting** bei wenigen Labels
+  - oft **kostengünstiger**
+- weiter trainiert werden (**Fine-Tuning**)
+  - bei starkem Unterschied in den Daten
+  - benötigen oft **viele gelabelte Daten** für das Training
+
+### Segmentierung
+
+Klassifikation pro Pixel
+
+- **Semantische Segmentierung**: Klassenlabel
+  - einfach: Binarisierung mit Schwellenwert
+- **Instanz-Segmentierung**: Instanz- und Klassenlabel für zählbare Objekte
+- **Panoptische Segmentierung**: Klassenlabel und bei zählbaren Objekten auch Instanzlabel
+
+Für Texturmerkmale muss Umgebung betrachtet werden $\rightarrow n$-dimensionaler Merkmalsvektor
+
+Metriken zur Bestimmung der **Prädiktionsqualität**:
+
+- **Intersection over Union** (IoU)
+
+$$IoU = {Area~of~Overlap \over Area~of~Union}$$
+
+- **Mean Intersection over Union** (mIoU): IoU pro Klasse $\rightarrow$ Durchschnitt
+- **Pixelgenauigkeit** (pixel accuracy)
+
+#### Up-Sampling
+
+CNN ohne Down-Sampling ist teuer, daher Down-Sampling mit Pooling und Stride
+
+**Fully Convolutional Networks**: Up-Sampling mit **Transposed Convolutions**
 
 ### Fragestellungen zu Klassifikation und Segmentierung
 
@@ -453,8 +572,8 @@ Inverse Filterung
 - Was passiert in der Convolution-Schicht eines CNNs?
 - Welche Aktivierungsfunktion wird in der letzten Schicht eines MLPs für eine Mehrklassen-Klassifikation oft genutzt?
 - Eine Convolution-Schicht hat als Eingabe 5 Merkmalskarten und soll 10 Merkmalskarten als Ausgabe haben. Wie viele Filterkernel werden benötigt?
-- Aufgabe: gg. Instanzen aus n Klassen $\rightarrow$ Klassifizieren Sie folgende Merkmalsvektoren (g_1, g_2, g_3) mittels MDK/NNK
 - Sie haben ein vortrainiertes Netz und einen Datensatz mit wenigen, aber sehr ähnlichen Zieldaten. Freezing oder Fine-Tuning?
+- Aufgabe: gg. Instanzen aus n Klassen $\rightarrow$ Klassifizieren Sie folgende Merkmalsvektoren (g_1, g_2, g_3) mittels MDK/NNK
 - Aufgabe: Für einen Punkt auf der Lösungsoberfläche der Kostenfunktion soll per Gradient Descent der nächste Punkt berechnet werden (gg. Punkt, Gradient und Schrittweite)
 
 ### Affine Transformationen 2D
