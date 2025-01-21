@@ -1,5 +1,5 @@
 ---
-date: 2025-01-14
+date: 2025-01-21
 author: Linus Englert
 timeline: false
 article: false
@@ -600,3 +600,158 @@ Transformationen:
 
 - Aufgabe: gg. Transformiertes Bild $\rightarrow$ Affine Transformation
 - Aufgabe: gg. Transformationssequenz $\rightarrow$ Objekt-Koordinatensystem und Objekt
+
+## Computergrafik
+
+### Rasterisierung vs. Raytracing
+
+Die zwei Paradigmen der Bildsynthese, lange Zeit war aber nur Rasterisierung (bzw. Scanline Rendering) in Echtzeit möglich (außer Raycasting)
+
+#### Rasterisierung
+
+- Berücksichtigung der Tiefe von Elementen (Dreiecken) wichtig
+- **lokales Beleuchtungsmodell** (nur direkte Beleuchtung)
+- spiegelnde Oberflächen und Schatten sind verhältnismäßig aufwendig
+
+#### Raytracing
+
+- Simulation von Schatten durch Schattenfühler (bzw. Schattenstrahl) zur Lichtquelle
+- Tiefe von Objekten wird implizit berücksichtigt
+- **Rekursives Raytracing** (bzw. Whitted-Raytracing): Aussenden gespiegelter Strahlen, wo diese auf spiegelnde Oberflächen treffen (**Sekundärstrahlen**)
+
+### Fragestellungen zu Rasterisierung vs. Raytracing
+
+- Beschreiben Sie das Raytracing-Prinzip
+- Was ist indirektes Licht und wird es bei lokalen Beleuchtungsmodellen berücksichtigt?
+- Aufgabe: Manuelles rekursives Raytracing basierend auf Szene mit Objekten (2D) und Kamera
+
+### OpenGL
+
+**Open Graphics Library** (seit 1992)
+
+API zur Echtzeitdarstellung dreidimensionaler Objekte
+
+Profile
+
+- Compatibility (alt)
+- Core (ca. 200 Methoden)
+
+Gründe dafür
+
+- hohe Marktdurchdringung
+- Betriebssystem- und hardware**unabhängig**
+- viele Sprachanbindungen (C, C++, C#, Java, Python)
+- von Industriekonsortium weiterentwickelt
+
+Prinzip eines Zustandsautomaten (Zustand heißt **OpenGL Context**)
+
+- legt fest, **wie** (in welchem Modus) Objekte **gerendert** werden
+  - glEnable(...) und glDisable(...)
+- legt fest, **was** (welche Objekte) **gerendert** werden soll
+  - Geometrie
+  - Texturen
+  - Shader
+
+In Objekten können Teilmengen eines Zustandes zusammengefasst werden
+
+### Fragestellungen zu OpenGL
+
+- Was legt der Zustand des OpenGL Zustandsautomats fest?
+- Szenario (z.B. Plattformunabhängige Simulation). Macht hier OpenGL Sinn? Wenn ja, warum?
+
+### Geometriebeschreibung
+
+Kategorien von Repräsentationsschemas
+
+- Implizite Repräsentationsschemas
+  - CSG (**Konstruktionsbaum**): Baumstruktur aus einzelnen Primitiven
+  - SDF (**Signed Distance Functions**): implizite Funktion gibt kürzesten Weg zu einem Punkt auf der Oberfläche zurück
+- Aufzählende Repräsentationsschemas
+  - **Parametrisierungen**: Funktion die nach äquidistanten Schritten ausgewertet wird
+  - **Zellgruppierungen**: Aufteilung in endliche Zahl Zellen gleichen Typs
+    - **Voxel-Repräsentation**: Würfel in 3D-Gitternetz $\rightarrow$ Approximation
+    - **Octree-Repräsentation**: Baumstruktur $\rightarrow$ rekursive Zerlegung in Sub-Quader $\rightarrow$ Approximation
+    - **3D-Punktwolke**: Liste von Punkten $\rightarrow$ Approximation
+  - **Zellkomplexe**: Aufteilung in endliche Zahl Zellen unterschiedlicher Form und Dimensionalität (konvexe Polytope)
+- Begrenzungsflächenmodelle
+  - Implizit, z.B. Definition algebraischer Flächen
+  - Aufzählend
+    - Polygonnetze (stückweise lineare Approximation bspw. durch Dreiecke)
+
+#### Orientierung
+
+- Dreiecke haben Vorder- und Rückseite
+- Konvention: wenn Vertizes von Dreiecken **CCW** (counter clock wise) auf dem Bildschirm erscheinen, ist die Vorderseite zu sehen (**Back-Face Culling**) $\rightarrow$ **Reihenfolge** bestimmt Drehrichtung (**Winding**) und damit Orientierung
+- 3D-Objekte müssen eine konsistente Orientierung besitzen
+
+#### Füllung
+
+- normalerweise Ausfüllung (**GL_FILL**)
+- Wireframe-Modus (**GL_LINE**)
+- Punktewolke (**GL_POINT**)
+
+#### Grafik-Primitive
+
+- GL_POINTS: langsam
+- GL_LINES: mittelschnell
+- GL_TRIANGLES: schnell
+- GL_TRIANGLE_FAN: schnell
+  - der erste Vertex ist gemeinsam, ist Zentrum des Fächers
+  - für runde / kegelförmige Objekte
+- GL_TRIANGLE_STRIP: am schnellsten
+  - Optimierung der Grafikkarte
+  - nur $n+2$ Vertizes für $n$ Dreiecke
+
+Tipps
+
+- Lücken vermeiden
+- Oberflächen-Tesselierung anpassen:
+  - wenig Detail oder flache Oberfläche $\rightarrow$ wenig Dreiecke
+  - rotierende Objekte $\rightarrow$ genaue Modellierung der Silhouette
+
+Damit Vertizes mehrfach verwendet werden können, gibt es **Indizes**
+
+### Fragestellungen zu Geometriebeschreibung
+
+- Welches Grafik-Primitive ist effizientesten (Rendering Speed, Speicherplatz)?
+- Auf welches Grafik-Primitiv ist Grafik-Hardware meist optimiert?
+- Sie sollen ein sich stetig rotierendes Objekt modellieren. Welche Modell-Aspekt sollten dabei besonders detailliert modelliert werden?
+- Sie haben n verbundene Dreiecke darzustellen. Wie viele Vertizes benötigen Sie, wenn Sie Triangle Strips verwenden?
+- Aufgabe: gg. Liste (mit Reihenfolge) von Vertizes (v_1, … v_n+2) $\rightarrow$ Indizes aller n verbundenen Dreiecke des Triangle Strips
+
+### OpenGL-Rendering-Pipeline
+
+### Fragestellungen zu OpenGL-Rendering-Pipeline
+
+- Was ist Face Culling und in welcher Pipeline-Stufe kommt es zum Einsatz?
+- Was enthält der Framebuffer?
+- In welcher Stufe befindet sich der Vertex-Shader, wo der Fragment-Shader und welche Funktion haben sie?
+- In welcher Stufe kommt der Depth-Buffer zum Einsatz?
+- Welches Problem existiert bei der Interpolation von z.B. Farbwerten während der Rasterisierung?
+- Warum findet der "Perspective Divide" erst nach der eigentlichen Projektion bei der Normierung statt?
+- Welche Strategie ist effektiver bei Modellen mit vielen Vertizes: Alle Vertizes der Reihe nach mit der Matrix jeder Transformationsstufe multiplizieren oder zuvor alle Matrizen aller Transformationsstufen multiplizieren und Resultat mit jedem Vertex multiplizieren?
+- Wie funktioniert der Maler-Algorithmus? Warum wurde dieser in den meisten Anwendungsbereichen durch den Z-Buffer-Algorithmus verdrängt?
+- Wo kommt die ortografische Projektion zum Einsatz?
+- Was passiert mit Teilungsverhältnissen nach der Anwendung der perspektivischen Projektion?
+- Warum ist die Reihenfolge von Rotate und Translate-Transformationen relevant?
+- Aufgabe: 2D Transformationssequenz auf Objekt anwenden, Objekt und Objekt-Koordinatensystem zu bestimmten Transformationsschritten in Weltkoordinatensystem einzeichnen.
+- Depth-Buffer Aufgabe (siehe Skript)
+
+### Texturen
+
+### Fragestellungen zu Texturen
+
+- Was versteht man unter einem Texel?
+- Welchen Effekt hat der Textur-Fortsetzungsmodus Clamp?
+- Wozu benötigt man Textur-Filter?
+- Wie funktioniert der MipMap-Verkleinerungsfilter?
+- Aufgabe: gg. Ein Schachbrett bestehend aus 4 x 4 Vertices, Eine quadratische Textur, die ein 2 x 2 Schachbrett darstellt. Gesucht: Textur-Fortsetzungsmodus und Texturkoordinaten für jeden der 16 Vertices, um ein 4 x 4 Schachbrett darzustellen.
+
+### Beleuchtung und Schattierung
+
+### Fragestellungen zu Beleuchtung und Schattierung
+
+- Wieso wertet man nicht gleich für jedes Pixel die Beleuchtungsformel aus?
+- Was ist der Halfway-Vektor und warum wird er eingesetzt (ist ja nur Approximation)?
+- Komponenten des Phong-Blinn-Beleuchtungsmodells?
+- Was bewirkt der Shininess-Faktor im Phong-Blinn-Beleuchtungsmodell? Welche Auswirkungen hat eine Änderung auf die Darstellung des Modells?
