@@ -1,5 +1,5 @@
 ---
-date: 2025-01-15
+date: 2025-01-21
 author: Linus Englert
 timeline: false
 article: false
@@ -405,3 +405,210 @@ Verschiedene Arten:
 - Vermeidung gefährlicher Methoden wie implizites eval()
   - direktes Setzen von HTML Code: element.innerHTML, document.write(), ...
 - Verständnis für Datenfluss
+
+## 04 Insecure Design
+
+Schwachstellen in Architektur und Design $\rightarrow$ **Secure by Design**
+
+- mehr Bedrohungsmodellierung
+- sichere Design Patterns
+- Verwendung von Referenzarchitekturen
+
+Requirements and Resource Management
+
+- Schutzziele und Exponiertheit von Anwendungen
+- Security Requirements & Budget
+
+### Secure Design
+
+Kultur & Methodik für robusten Code
+
+#### Secure Development Lifecycle
+
+- Durchgängiges Involvieren von Security-ExpertInnen
+- Library Management & Security Design Patterns
+- Unit- und Integrationstests (v.a. für kritische Abläufe)
+- Robuste Trennung von Mandanten / Schutzbedarf
+- Begrenzung des Ressourcenverbrauchs nach Benutzer / Dienst
+
+### Bedrohungsanalyse
+
+Erfassung von technischen, organisatorischen und benutzerbedingten Bedrohungen in einer **Bedrohungsmatrix** (Gefährdungsbereiche & Auslöser) oder einem **Bedrohungsbaum** (Wurzel als mögliches Angriffsziel, Knoten als Zwischenziele zum Erreichen des Elternknoten, Verknüpfung mit UND bzw. ODER)
+
+#### Klassifikation nach STRIDE
+
+Spoofing Tampering Repudiation Information disclosure Denial of service Elevation of privilege
+
+#### Risikoanalyse
+
+Eintrittswahrscheinlichkeit & Schwere des Schadens
+
+Eintrittswahrscheinlichkeit abhängig von
+
+- Aufwand des Angriffs
+- möglicher Nutzen des Angriffs
+- mögliches Schadensausmaß
+- Fähigkeiten und Risikobereitschaft der Angreifer
+
+Sicherheitsdesigner muss erfinderischer sein als Angreifer
+
+#### Sicherheitsstrategie und -modell
+
+Aus den Ergebnissen der Risikoanalyse, Ermittelung von Maßnahmen zur Abwehr der Bedrohungen
+
+**Design Patterns** für wiederholt auftretende Probleme
+
+### Security Patterns
+
+#### Einzelner Zugriffspunkt
+
+- externer Zugriff auf ein System
+- Schutz vor Missbrauch und Schaden im Fokus
+- einfach anwendbarer, einzelner Zugriff zum System
+- Zugriff kann **erlaubt oder verweigert** werden
+
+#### Check Point
+
+- Erweiterung des Einzelnen Zugriffspunktes
+- Erkennen und **Melden von Angriffen**
+- legitimer Zugriff soll aber nicht beeinträchtigt werden
+- Vorteile
+  - konkrete, anpassbare Sicherheitspolicy
+  - unabhängige Tests verschiedener Policies
+- Nachteile
+  - Fehler / Sicherheitslücken in der Implementierung gefährden das gesamte System
+  - Erkennung unnatürlichen Nutzerverhaltens oft sehr aufwändig
+  - Konfiguration kann sehr aufwändig werden
+
+#### Security Session
+
+- an Benutzer-Session gekoppelte Security Session, die über SessionID referenziert wird
+- beinhaltet z.B. Zugriffsberechtigungen
+- bei entsprechenden Anfragen wird die Zugriffsberechtigung in der Security Session geprüft
+- Vorteile
+  - einfacher, spezifischer Zugriffspunkt
+  - einfach erweiterbar
+  - Caching $\rightarrow$ Performance
+- Nachteile
+  - Globale Objekte meist unerwünscht
+  - Austausch von großen Objekten schwierig: geht auf Performance, muss sicher übertragen werden
+  - nachträgliches Hinzufügen zu einem System kann sehr aufwändig sein
+
+#### Vollzugriff mit Fehlern
+
+- Oberfläche stellt alle Funktionalitäten dar (keine versteckten Elemente)
+- vor einer Ausführung muss Zugriffsberechtigung geprüft werden
+- im Verbotsfall soll eine Fehlermeldung erscheinen (einheitliche Fehlerbehandlung)
+- dem Nutzer sollte ersichtlich sein, welche Aktionen erlaubt sind
+- Vorteile
+  - konsistente Oberfläche
+  - einfache Integration
+- Nachteile
+  - Frustration wenn nicht ganz klar ist, was erlaubt ist
+  - aufwendig, weil immer geprüft werden muss
+  - Oberfläche kann aufgebläht wirken
+
+#### Begrenzter Zugriff
+
+Gegenteil von Vollzugriff mit Fehlern
+
+- nur ausführbare Funktionalität wird angezeigt
+- Vorteile
+  - übersichtliche Oberfläche
+- Nachteile
+  - angepasste Trainings für verschiedene Nutzerkreise
+  - Implementierung der Zugriffsberechtigung in der Oberfläche vergrößert den Angriffsvektor
+
+### Sicherheit in Internet Anwendungen
+
+#### Information Obscurity
+
+- Verschleierung sensitiver Daten: Versionsnummer, geöffnete Ports, ...
+- wenn möglich ohne Verschlüsselung (Zeitfaktor)
+- nach Wichtigkeit klassifizieren und wichtigste Daten verschlüsseln
+- Vorteile
+  - Erhöhung der Informationssicherheit
+  - wichtige Daten für einen Angriff sind nur schwer identifizierbar
+- Nachteile
+  - Beeinträchtigung der Performance
+  - schlechtere Wartbarkeit
+  - aufwändigere Programmierung
+
+#### Sichere Kanäle
+
+Sichere Kanäle für kritische Daten, damit diese nicht ausspioniert werden können
+
+- Verschlüsselung ist starker Overhead
+- Vorteile
+  - ohne weitere Kenntnisse sind mitgelesene Daten nutzlos
+  - Schlüsselaustausch-Verfahren ermöglichen eine sichere Verbindung, wenn sich Gesprächspartner nicht kennen
+- Nachteile
+  - kostet Performance
+  - kann Verfügbarkeit einschränken
+  - erhöhte Instandhaltungskosten
+
+#### Known Partners
+
+Beide Gesprächspartner können sich gegenseitig eindeutig identifizieren
+
+- Schutz vor Identitätsdiebstahl
+- gegenseitiger Nachweis, Kommunikation über sichere Kanäle
+- Vorteile
+  - dem system ist bekannt, wer agiert
+  - der Nutzer kann das System eindeutig erkennen und Fälschungen identifizieren
+- Nachteile
+  - schlechtere Performance
+  - schlechtere Wartbarkeit
+  - Verfügbarkeit kann beeinträchtigt sein
+
+#### Demilitarisierte Zone (DMZ)
+
+Trennt Business Funktionalität von Webservern, welche diese ausliefern
+
+- reduziert die Angriffsfläche
+- erschwert das unerlaubte Eindringen in ein System
+- Vorteile
+  - weniger Systeme können direkt angegriffen werden
+- Nachteile
+  - Firewall als "Single Point of Failure"
+  - höhere Wartungskosten
+  - kann Performance beeinträchtigen
+
+#### Protection Reverse Proxy
+
+Schützt eine Anwendung auf Software Protokoll Ebene
+
+- Vorteile
+  - macht es schwerer Schwachstellen im Backend Server direkt auszunutzen
+  - einfacheres Patchmanagement, da nur eine Maschine mit dem Internet verbunden ist
+- Nachteile
+  - Block List Filter können trügerische Sicherheit darstellen
+  - Allow List Filter schränken in der Regel erheblich ein
+  - "Single Point of Failure"
+
+#### Integration Reverse Proxy
+
+Homogene Sicht auf verteilte Systeme einer Domäne
+
+- Vorteile
+  - ein Server, eine IP-Adresse
+  - einfache Erweiterung möglich
+  - Load Balancing möglich
+  - zentralisiertes Logging möglich
+- Nachteile
+  - "Single Point of Failure"
+  - Beschränkung max. paralleler Verbindungen
+  - Schwierigkeit: Session-Management
+
+#### Front Door
+
+Idealer Einstiegspunkt für Authentifizierung / Autorisierung, ebenfalls ein Reverse Proxy
+
+- Vorteile
+  - "Single Sign On" möglich
+  - ein Benutzerprofil für diverse Backend Anwendungen
+  - Backend Server müssen sich nicht um Authentifizierung kümmern
+  - ermöglicht zentralisiertes Logging
+- Nachteile
+  - Inkonsistenzen möglich wenn bestimmte zusätzliche Nutzerdaten auf Backend Servern gespeichert werden müssen
+  - verschiedene Richtlinien / Vorgaben müssen unter einen Hut gebracht werden
