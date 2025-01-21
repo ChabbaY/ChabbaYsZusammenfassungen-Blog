@@ -578,6 +578,24 @@ CNN ohne Down-Sampling ist teuer, daher Down-Sampling mit Pooling und Stride
 
 ### Affine Transformationen 2D
 
+$$x_a = A \cdot x_e + v$$
+
+- $x_a$: Ausgabepunkt
+- $x_e$: Eingabepunkt
+- $A$: 2 $\times$ 2 Transformationsmatrix mit $det(A) \neq 0$
+- $v$: Verschiebevektor
+
+Geraden bleiben Geraden und Parallelen parallel, Distanz- und Winkelerhaltung nur bei **Euklidischen Transformationen** Translation, Rotation, Reflektion und <ins>nicht</ins> Skalierung und Scherung
+
+Transformationen:
+
+- **Translation**: Verschiebung
+- **Rotation**: um einen Winkel
+- **Skalierung**: in x- und y-Richtung
+- **Scherung**: in Koeffizienten $a_x$ und $a_y$
+
+**Reihenfolge** der Transformationsschritte spielt eine Rolle, da Matrixmultiplikation nicht kommutativ
+
 ### Fragestellungen zu Affinen Transformationen 2D
 
 - Aufgabe: gg. Transformiertes Bild $\rightarrow$ Affine Transformation
