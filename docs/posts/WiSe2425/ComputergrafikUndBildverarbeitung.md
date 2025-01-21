@@ -344,3 +344,81 @@ So kann **Salt-and-Pepper-Rauschen** reduziert werden
 - Mit welchem Operator lassen sich kleine Bildstrukturen entfernen?
 - Aufgabe: Wenden Sie das strukturierende Element x auf Grauwert/Binärbild y mit Operator z an.
 - Aufgabe: gg. Grauwertbild $\rightarrow$ Welcher Operator wurde angewandt?
+
+### Fouriertransformation
+
+Zerlegung von Bildern in "Schwingungen" unterschiedlicher Frequenzen
+
+- effizientere Anwendung linearer Filter im "Frequenzraum"
+- Erkennung interessanter Bildeigenschaften
+
+#### Fourierreihen
+
+**Gewichtete Summe** harmonischer Schwingungen unterschiedlicher Frequenz $\rightarrow$ periodische, kontinuierliche Funktion mit unendlicher Zahl an Summanden $\rightarrow$ **Reihenentwicklung**
+
+**Fourier's Theorem**: Jede reelwertige, integrierbare, periodische Funktion lässt sich als Summe von Sinus- und Kosinusfunktionen unterschiedlicher Frequenzen darstellen - _Jean Baptiste Joseph Fourier_
+
+#### 1D Fouriertransformation
+
+Nichtperiodische Funktion ist periodische Funktion mit **unendlicher Periode** $\rightarrow$ **Grenzwertbildung** $\rightarrow$ Delta benachbarter Frequenzen geht gegen 0 $\rightarrow$ Frequenzen treten in infinitesimal kleinen Abständen im Spektrum auf $\rightarrow$ aus diskretem Spektrum wird kontinuierliches
+
+Das **Fourierintegral** heißt auch spektrale Zerlegung von $g$
+
+#### Diskrete 1D Fouriertransformation
+
+Relevant sind v.a. diskrete Funktionen (endliche Zahl an Funktionswerten, z.B. Messwerte)
+
+**Abtastfrequenz** $\tau$, $N$ Abtastpunkte $\rightarrow$ Periodenlänge $T = N \cdot \tau$
+
+Abtastung mit **Kammfunktion** als Abfolge sog. **Impulsfunktionen** im Abstand von $\tau$
+
+**Shannon'sche Abtasttheorem**: wenn Abtastfrequenz $\tau$ mehr als doppelt so groß wie höchste Frequenz des Spektrums $\rightarrow$ fehlerfreies Abtasten möglich ($r > 2 \cdot f_{max}$)
+
+Abtastwerte können **komplex** sein
+
+Effizienter Algorithmus: **Fast Fourier Transformation** (FFT) - Laufzeitverhalten $O(n \cdot log(n))$
+
+Nicht periodische diskrete Funktionen werden durch Wiederholung periodisch
+
+#### Diskrete 2D Fouriertransformation
+
+Analog zu 1D, aber statt nur einer diskreten Frequenz $k$ **vertikale** und **horizontale** Frequenz / **Wellenzahl** $u$ und $v$
+
+2D-Feld diskreter Abtastpunkte $(x,y) \in [0, ..., L-1] \times [0, ..., R-1]$, (x, y) sind **Bildkoordinaten**, (u, v) sind Spektralkoordinaten
+
+Eigenschaften
+
+- **bijektiv**: kein Verlust von Bildinformationen
+- **komplexwertig**
+- Multiplikation im **Ortsraum** $==$ Faltung im **Frequenzraum**
+
+### Fragestellungen zur Fouriertransformation
+
+- DFT: Wie wird mit nicht-periodischen diskreten Funktionen umgegangen? Welche Probleme entstehen? Welche Lösungen gibt es?
+- Nennen Sie ein Anwendungsgebiet der DFT (bzw. inverse DFT)
+- Wie lautet das Shannon-Theorem?
+- Wie lautet der Faltungssatz?
+- Aufgabe: Zuordnung Bild zu Frequenzspektrum
+- Aufgabe: Zuordnung gefiltertes Bild zu Frequenzspektrum
+- Aufgabe: Zuordnung Übertragsfunktion zu gefiltertem Bild
+
+### Klassifikation und Segmentierung
+
+### Fragestellungen zu Klassifikation und Segmentierung
+
+- Was ist der Unterschied zwischen Klassifikation und Segmentierung?
+- Wie funktioniert der Minimum-Distance-Klassifikator?
+- Wie ist ein Perzeptron (/ MLP) aufgebaut?
+- Was passiert in der Convolution-Schicht eines CNNs?
+- Welche Aktivierungsfunktion wird in der letzten Schicht eines MLPs für eine Mehrklassen-Klassifikation oft genutzt?
+- Eine Convolution-Schicht hat als Eingabe 5 Merkmalskarten und soll 10 Merkmalskarten als Ausgabe haben. Wie viele Filterkernel werden benötigt?
+- Aufgabe: gg. Instanzen aus n Klassen $\rightarrow$ Klassifizieren Sie folgende Merkmalsvektoren (g_1, g_2, g_3) mittels MDK/NNK
+- Sie haben ein vortrainiertes Netz und einen Datensatz mit wenigen, aber sehr ähnlichen Zieldaten. Freezing oder Fine-Tuning?
+- Aufgabe: Für einen Punkt auf der Lösungsoberfläche der Kostenfunktion soll per Gradient Descent der nächste Punkt berechnet werden (gg. Punkt, Gradient und Schrittweite)
+
+### Affine Transformationen 2D
+
+### Fragestellungen zu Affinen Transformationen 2D
+
+- Aufgabe: gg. Transformiertes Bild $\rightarrow$ Affine Transformation
+- Aufgabe: gg. Transformationssequenz $\rightarrow$ Objekt-Koordinatensystem und Objekt
