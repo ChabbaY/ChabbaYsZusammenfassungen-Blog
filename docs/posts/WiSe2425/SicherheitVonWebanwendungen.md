@@ -612,3 +612,53 @@ Idealer Einstiegspunkt für Authentifizierung / Autorisierung, ebenfalls ein Rev
 - Nachteile
   - Inkonsistenzen möglich wenn bestimmte zusätzliche Nutzerdaten auf Backend Servern gespeichert werden müssen
   - verschiedene Richtlinien / Vorgaben müssen unter einen Hut gebracht werden
+
+## 05 Security Misconfiguration
+
+Robuste Konfiguration dämmt Auswirkungen erfolgreicher Angriffe ein ("least privilege")
+
+Umfasst
+
+- Anwendungen
+- Frameworks
+- Web Server
+- Datenbank Server
+- Plattform
+
+und regelmäßiges Patchen
+
+Beinhaltet seit 2021 auch XML eXternal Entities (XXE)
+
+### Sichere Konfiguration
+
+- keine unnötige Veröffentlichung interner Informationen
+  - Fehlerausgabe
+  - Versionsnummer
+  - Banner
+- Default Accounts deaktivieren
+- Frameworks beachten
+- feingranulare Rechte, möglichst eingeschränkt ("least privilege")
+- Security Guide berücksichtigen
+- Logging aktivieren
+- Sichere Speicherung von Passwörtern
+
+#### Sichere Konfiguration von Webservern
+
+- Zugriffsrechte des Web-Server Nutzer-Accounts beschränken
+- Fehlerausgaben minimieren bzw. verallgemeinern
+- Programme und Daten in verschiedenen Verzeichnissen (heute nicht mehr so wichtig)
+- geeignete Protokollierung
+
+#### Sichere Konfiguration von Datenbankservern
+
+- nicht mit DB-Admin arbeiten
+  - eigener Account pro Anwendung
+- DB-Admin Passwort setzen
+- wo möglich nur Zugriff über localhost
+- Zugriff auf Systemtabellen begrenzen / verbieten
+
+### XML eXternal Entities (XXE)
+
+XML-Format wird für Datenaustausch verwendet
+
+Schwachstelle, wenn XML ungeprüft vom Server ausgewertet wird
