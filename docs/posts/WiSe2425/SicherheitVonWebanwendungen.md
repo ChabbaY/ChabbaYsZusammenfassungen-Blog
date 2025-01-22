@@ -779,3 +779,64 @@ Stelle, an der Komponenten aufgenommen werden können: Abweisung, Entfernung und
   - fehlerfreie Konfiguration
   - aktive Suche nach Verwundbarkeiten in den verwendeten Komponenten
   - regelmäßige Updates
+
+## 07 Identification and Authorization Failures
+
+Schwachstelle in Authentifikation oder Session Management gefährdet Accounts (insbesondere privilegierte) $\rightarrow$ Passwörter und Session-IDs sind besonders gut zu schützen
+
+### Mögliche Schwachstellen zu Authentifikation und Session Management
+
+- Session ID steht in URL $\rightarrow$ kann versehentlich geteilt werden
+- Logout an öffentlichem Ort vergessen und Session Timeout zu hoch
+- Angreifer hat Zugang zur Passwort-Datenbank, welche nicht ausreichend geschützt ist
+
+### Möglicher Angriff: Session Fixation
+
+1. Angreifer beschafft gültige Session ID
+2. schiebt Session ID Opfer unter
+3. Opfer authentifiziert sich
+4. Angreifer hat authentifizierte Session
+
+Session ID an das Opfer durch
+
+- Link der Session ID enthält
+- gefälschte Login-Seite (dann auch Passwort bekannt)
+- XSS und einen Cookie
+
+### Allgemeine Richtlinien zur Authentifizierung
+
+- starke Passwörter erzwingen
+- sicheres Passwort-Recovery anbieten (inkl. persönlicher Daten und "geheimer" Fragen, Benutzername nur server-seitig zu Session ID gespeichert, Verwendung zweiter Faktor)
+- Multifaktor Authetifizierung verwenden
+- Fehlermeldungen generisch halten (zusätzlich zufällige Verzögerung $\rightarrow$ Verhinderung Informationsgewinn)
+- Passwörter nur in sicheren Kanälen übermitteln
+- bei mehreren erfolglosen Anmeldeversuchen temporär sperren
+
+### Allgemeine Richtlinien zum Session Management
+
+Zustandshaltung mit Zugriffsrechten & Lokalisierung, Pre-Auth oder Post-Auth
+
+- temporär gleichwertig mit verwendeten Credentials
+- muss vor **Session Hijacking** geschützt werden
+- nichtssagender Name z.B. "id", damit kein Schluss auf verwendetes Framework
+- sollte mehr als 128 Bit lang sein und mehr als 64 Bit **Entropie** beinhalten
+- Bedeutung ist nur auf dem Server gespeichert
+- am besten Speicherung in Cookie
+  - lässt auch Verfallszeit und granulare Einschränkung definieren
+  - ansonsten auch Body Argument, Hidden Field, Http Header, etc. denkbar
+- am besten vorhandene Implementierung von **Framework** verwenden
+  - keine Default Konfiguration
+  - aktuell halten
+- HTTPS für gesamte Session verwenden
+- Cookie Attribute
+  - **Secure**: Übertragung nur über sicheren Kanal
+  - **HttpOnly**: kein Zugriff per JavaScript
+  - **Domain**: Cookie darf nur an definerte Domain und deren Subdomains gesendet werden
+  - **Path**: Einschränkung von Verzeichnissen
+  - **Expire**: Ablaufzeit
+  - **Max-Age**: geht vor Expire
+- Lbenszyklus
+  - Art der Erzeugung: **permissive** (zu Session ID von Benutzer wird Session erzeugt), heute meist **strict** (nur der Server kann eine Session ID erzeugen, sonst kommt ein Alarm)
+  - muss wie nicht vertrauenswürdiges Datum behandelt werden
+  - muss bei Rechteänderung neu erzeugt werden
+  - Lebensdauer sollte so kurz wie möglich sein (kritisch: 2-5 Minuten, niedriges Risiko: 15-30 Minuten)
