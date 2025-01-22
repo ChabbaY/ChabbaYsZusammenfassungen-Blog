@@ -1,5 +1,5 @@
 ---
-date: 2025-01-21
+date: 2025-01-22
 author: Linus Englert
 timeline: false
 article: false
@@ -719,7 +719,104 @@ Damit Vertizes mehrfach verwendet werden können, gibt es **Indizes**
 - Sie haben n verbundene Dreiecke darzustellen. Wie viele Vertizes benötigen Sie, wenn Sie Triangle Strips verwenden?
 - Aufgabe: gg. Liste (mit Reihenfolge) von Vertizes (v_1, … v_n+2) $\rightarrow$ Indizes aller n verbundenen Dreiecke des Triangle Strips
 
-### OpenGL-Rendering-Pipeline
+### Homogene Koordinaten & Koordinatensysteme
+
+<ins>Problem</ins>: Affine Transformationen in 3D brauchen immer eine zusätzliche Addition des Translationsvektors $t$, lediglich Multiplikation wäre praktischer
+
+Homogenisierung
+
+$$x_h = (w \cdot x, w \cdot y, w \cdot z, w)^T$$
+
+Dehomogenisierung (Perspective Divide)
+
+$$x = \begin{pmatrix}{x \over w}, {y \over w}, {z \over w}\end{pmatrix}^T$$
+
+Damit ist die Translation eine Matrixmultiplikation
+
+$$\begin{pmatrix}x_a \\ y_a \\ z_a \\ 1\end{pmatrix} = \begin{pmatrix}1 & 0 & 0 & t_x \\ 0 & 1 & 0 & t_y \\ 0 & 0 & 1 & t_z \\ 0 & 0 & 0 & 1\end{pmatrix} \cdot \begin{pmatrix}x_e \\ y_e \\ z_e \\ 1\end{pmatrix} = \begin{pmatrix}x_e + t_x \\ y_e + t_y \\ z_e + t_z \\ 1\end{pmatrix}$$
+
+Jedes Objekt $O$ hat sein eigenes Koordinatensystem, daher muss für eine Darstellung eine Transformation $T_{OW}$ in das Weltkoordinatensystem $W$ stattfinden
+
+Bei OpenGL sitzt der Betrachter (**Augenpunkt**) standardmäßig im Ursprung, x zeigt nach rechts, y nach oben und z zum Betrachter
+
+"**Rechtshändiges Koordinatensystem**", da Achsen durch Daumen (x) Zeige- (y) und Mittelfinger (z) der rechten Hand repräsentiert werden
+
+### Vertex Verarbeitung
+
+Die Vertex Verarbeitung findet für **jeden Vertex** statt und verwendet den **Vertex Shader** (C-Dialekt GLSL)
+
+Die _Objektkoordinaten_ werden in der **Modell-Transformation** zu _Welt-Koordinaten_, dann in der **Augenpunkt-Transformation** zu _Kamera-Koordinaten_ und abschließend in der **Projektions-Transformation** zu _Clip-Koordinaten_
+
+#### Modell-Transformation
+
+Positionierung von Objekten in der Szene durch Transformation der Objektkoordinaten in das Weltkoordinatensystem
+
+Rotation
+
+- Probleme
+  - **Singularitäten**: unendlich viele Repräsentationen ein und derselben Rotation
+  - **Doppelrepräsentationen**
+  - Interpolation führt zu ungleichmäßigen Abständen
+- Lösungen
+  - Eulersche Winkel
+    - **Gimbal Lock** (Singularitäten)
+  - Euler Achse-und-Winkel
+    - Doppelrepräsentationen möglich
+  - **Quaternionen**
+    - hyperkomplexe Zahlen (3 Imaginärteile, 1 Realteil)
+    - effiziente Komposition
+    - weiche Interpolation möglich
+    - kein Gimbal Lock
+- Objekt-Koordinatensystem wird mitgedreht
+
+Skalierung
+
+- Objekt-Koordinatensystem wird mitskaliert
+
+Modell-Transformation besteht in der Regel aus mehreren Schritten, diese können per Matrizenmultiplikation zu einer einzelnen Matrix $M$ zusammengefasst werden
+
+<ins>Wichtig</ins>: Matrixmultiplikation ist **nicht kommutativ**
+
+Bei hierarchisch aufgebauten Objekten wird die Modell-Matrix jeder Hierarchiestufe benötigt
+
+- Realisierung über **Szenengraph-Struktur**: rekursive Bestimmung
+- erweiterbar auf bspw. Lichtquellen
+
+#### Augenpunkt-Transformation
+
+Basierend auf Position und Blickrichtung der Kamera, Beschreibung durch Matrix $V$
+
+Nach der Transformation ist der Augenpunkt _Eye_ im Koordinatenursprung, Blickrichtung -z, +y nach oben
+
+In der Regel über **Look-At** Parametrisierung
+
+Die kombinierte Matrix $V \cdot M$ wird auch **Model-View-Matrix** genannt
+
+#### Projektions-Transformation
+
+Abbildung der dreidimensionalen Szene auf dem zweidimensionalen Bildschirm über Projektions-Transformation $P$
+
+Relevante Arten
+
+- **Orthographische Projektion** (Parallel-Projektion)
+  - Sichtbares Volumen: Kubus
+  - Entfernung verändert Größe nicht
+  - $P$ ist Einheitsmatrix $\rightarrow$ Längen und Winkel bleiben erhalten
+  - Anwendung in CAD-Werkzeugen
+- **Perspektivische Projektion**
+  - Sichtbares Volumen: **Pyramidenstumpf**
+  - Winkel bleiben erhalten, aber Längen werden angepasst
+  - Entspricht der natürlichen Wahrnehmung (Auge / Kamera)
+
+Der Inhalt der Projektionsmatrix $P$ wird so gewählt, dass alle drei Koordinaten am Ende (nach der Dehomogenisierung ("Perspective Divide")) im Bereich [-1; 1] liegen
+
+Near Clipping Plane sollte möglichst weit vom Augenpunkt und Far Clipping Plane möglichst nah am Augenpunkt sein
+
+Ergebnis:
+
+$$x_a = P \cdot V \cdot M \cdot x_e$$
+
+$P \cdot V \cdot M$ heißt **Model-View-Projection-Matrix**
 
 ### Fragestellungen zu OpenGL-Rendering-Pipeline
 
