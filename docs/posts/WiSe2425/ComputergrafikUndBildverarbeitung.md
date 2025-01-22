@@ -818,6 +818,37 @@ $$x_a = P \cdot V \cdot M \cdot x_e$$
 
 $P \cdot V \cdot M$ heißt **Model-View-Projection-Matrix**
 
+### Vertex Nachverarbeitung
+
+Konfigurierbare aber nicht programmierbare Pipeline-Stufen
+
+#### Zusammenfassung der Grafik-Primitive
+
+Auf Basis der Verbundenheitsinformation der glDraw*-Aufrufe werden Grafik-Primitive aus den Vertizes zusammengefasst
+
+#### Clipping
+
+Entfernung von Grafik-Primitiven außerhalb des **Sichtvolumens**, dabei können neue Grafik-Primitive entstehen
+
+- Alle Koordinaten müssen innerhalb $[-w_c; w_c]$ liegen, um im Sichtvolumen zu sein
+- Wird direkt von der **Grafikhardware** übernommen
+- Oft zusätzliche räumliche Datenstruktur, die bereits vorab Sichtbarkeit feststellen kann
+- Oft auch Reduzierung des Detailgrad in der Ferne (**Level-of-Detail** (LOD))
+
+#### Normierung
+
+Der "**Perspective Divide**" $\rightarrow$ Projektion auf die Near Clipping Plane
+
+#### Viewport-Transformation
+
+Umrechnung normierter Koordinaten in **Bildschirm-Koordinaten** (Pixel-Koordinaten)
+
+#### Face Culling
+
+Je nach Konfiguration müssen die Vertizes (in Bildschirmkoordinaten) im oder gegen den Uhrzeigersinn angeordnet sein, damit es sich um die Vorderseite handelt (welche zu sehen ist)
+
+Ausschlaggebend ist die Reihenfolge im Programmcode
+
 ### Fragestellungen zu OpenGL-Rendering-Pipeline
 
 - Was ist Face Culling und in welcher Pipeline-Stufe kommt es zum Einsatz?
