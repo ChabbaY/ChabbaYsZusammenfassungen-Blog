@@ -1,5 +1,5 @@
 ---
-date: 2025-01-22
+date: 2025-01-23
 author: Linus Englert
 timeline: false
 article: false
@@ -607,13 +607,13 @@ Transformationen:
 
 Die zwei Paradigmen der Bildsynthese, lange Zeit war aber nur Rasterisierung (bzw. Scanline Rendering) in Echtzeit möglich (außer Raycasting)
 
-#### Rasterisierung
+#### Paradigma: Rasterisierung
 
 - Berücksichtigung der Tiefe von Elementen (Dreiecken) wichtig
 - **lokales Beleuchtungsmodell** (nur direkte Beleuchtung)
 - spiegelnde Oberflächen und Schatten sind verhältnismäßig aufwendig
 
-#### Raytracing
+#### Paradigma: Raytracing
 
 - Simulation von Schatten durch Schattenfühler (bzw. Schattenstrahl) zur Lichtquelle
 - Tiefe von Objekten wird implizit berücksichtigt
@@ -848,6 +848,71 @@ Umrechnung normierter Koordinaten in **Bildschirm-Koordinaten** (Pixel-Koordinat
 Je nach Konfiguration müssen die Vertizes (in Bildschirmkoordinaten) im oder gegen den Uhrzeigersinn angeordnet sein, damit es sich um die Vorderseite handelt (welche zu sehen ist)
 
 Ausschlaggebend ist die Reihenfolge im Programmcode
+
+### Rasterisierung
+
+- Input: Grafik-Primitive mit Bildschirm-Koordinaten (Vertizes)
+- Output: Fragmente (Pixel) für den Fragment Shader
+- Konfigurierbar, aber nicht programmierbar
+- Auch **Scan Conversion** genannt
+
+#### Interpolation
+
+Festlegung der Farbe pro Vertex $\rightarrow$ "Mischung" innerhalb des Dreiecks
+
+- Bestimmung der Farbe mit (homogenisierten) baryzentrischen Koordinaten
+- Für die Erhaltung von Distanzverhältnissen muss eine "z-Interpolation" durchgeführt werden (Berücksichtigung der Tiefe)
+
+### Fragment Verarbeitung
+
+Die Fragment Verarbeitung findet für **jedes Fragment** (mit Bildschirm-Koordinaten) statt und verwendet den **Fragment Shader** (C-Dialekt GLSL)
+
+Mit den Pipeline-Stufen **Texturierung** und **Beleuchtung** (s.u.) werden Tiefen- und Farbwerte berechnet
+
+### Framebuffer Operationen
+
+Darstellung farbiger Fragmente auf dem Bildschirm
+
+Der **Framebuffer** ist ein Speicherbereich, der alle Pixel-Farbwerte enthält, wie sie später auf dem Monitor dargestellt werden (übernimmt das OS)
+
+Die Rendering Loop beginnt mit dem Löschen des Framebuffer und endet mit einem fertigen Framebuffer, dazwischen die Framebuffer Operationen
+
+#### Ausleseprobleme
+
+Es kann auch gelesen werden während geschrieben wird
+
+- **Flickering** (Flackern): wenn der Framebuffer gerade leer ist $\rightarrow$ abrupte Farbwechsel
+  - Lösung: **Double Buffering**: in **Back Buffer** wird geschrieben, aus **Front Buffer** wird gelesen, nach Ende des Schreibvorgangs wird getauscht
+- **Tearing**: wenn Framebuffer gerade neu beschrieben wird $\rightarrow$ vorheriger und aktueller Framebuffer gleichzeitig in Teilen zu sehen
+  - Lösung: zusätzliche **vertikale Synchronisation** d.h. Grafikkarte wird auf Bildwiederholfrequenz des Monitors gedrosselt
+
+#### Depth Test
+
+Problem: **partielle Verdeckung** eines Objektes durch ein anderes Objekt, im Vordergrund erscheint aber lediglich das was zuletzt gerendert wurde
+
+Lösung 1: **Raytracing**
+
+- implizite Berücksichtigung
+
+Lösung 2: **Maler-Algorithmus**
+
+- Sortierung nach Abstand zum Augenpunkt
+- entferntestes Objekt wird zuerst gezeichnet
+- funktioniert aber nicht für sich gegenseitig durchdringende Objekte
+
+Lösung 3: **Depth Buffer Algorithmus**
+
+- Tiefenwert für jedes Pixel in Depth Buffer gespeichert
+- Initialisierung mit Maximalwert, Pixel mit kleinerem Tiefe-Wert als im Depth Buffer wird in Back Buffer geschrieben und aktualisiert Depth Buffer
+- Problem: **Transparenz** (ggf. Verhinderung korrekter Farbmischung)
+  - Lösung: Order-Independent-Transparency Algorithmus
+- Problem: **Z-Fighting** bei zu kleinem Depth Buffer
+  - aufgrund der Diskretisierung der z-Werte
+  - Near Clipping Plane sollte möglichst weit vom Augenpunkt entfernt sein
+
+#### Blending
+
+Bestimmt Art der Verrechnung mit existierenden Werten im Back Buffer bspw. bei Transparenz: Standard ist Addition
 
 ### Fragestellungen zu OpenGL-Rendering-Pipeline
 
