@@ -737,3 +737,45 @@ Beispiel geänderter XML Request für Zugriff auf /etc/passwd:
 - auch die Content-Type und Accept Headers validieren
 - Benutzereingaben, die zu XML geparst werden immer server-seitig mit Allowlist validieren
 - böswillige Anfragen mit "406/Not Acceptable" beantworten
+
+## 06 Vulnerable and Outdated Components
+
+Software ist nie fehlerfrei
+
+Fehler können aus verwendeten Bibliotheken / Frameworks stammen, oft weil diese nicht aktuell gehalten werden
+
+### Common Vulnerabilty and Exposures (CVE)
+
+Einheitliche Namenskonvention für Schwachstellen, eindeutige Nummer inkl. Jahr
+
+- ID
+- Status $\rightarrow$ {Reserved, Disputed, Reject, "active"}
+- Kurzbeschreibung
+- Referenzen: Reports, Metasploit, ...
+- Kritikalität: CVSS Score (Base Score, Temporal Score, Environmental Score)
+
+### Schutzmaßnahmen gegen Vulnerable and Outdated Components
+
+- wenn möglich: keine fremden Komponenten
+- regelmäßige Upgrades
+- Langzeitsupport (LTS) verwenden
+- verwendete Komponenten erfassen & überwachen
+- nicht benötigte Funktionalität mittels Wrapper deaktivieren
+- regelmäßige Security Tests
+
+### Gateways
+
+Stelle, an der Komponenten aufgenommen werden können: Abweisung, Entfernung und Verwaltung der Komponente muss möglich sein
+
+- **Selection / Consumption**
+  - Untersuchung der Herkunft: Lizenzbedingungen, Security, Qualität
+  - Check, dass richtige Komponente heruntergeladen
+  - Policy, die eine Komponente erfüllen muss (Updates, Umgang mit Schwachstellen, Vertrauenswürdigkeit)
+- **Integration**
+  - unveränderte Übernahme in das Projekt
+  - über gesamte Entwicklung Konformität mit Policies prüfen
+- **Deployment**
+  - im Endprodukt selbe Komponente wie in der Entwicklung
+  - fehlerfreie Konfiguration
+  - aktive Suche nach Verwundbarkeiten in den verwendeten Komponenten
+  - regelmäßige Updates
