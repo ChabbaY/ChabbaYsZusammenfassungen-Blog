@@ -932,6 +932,51 @@ Bestimmt Art der Verrechnung mit existierenden Werten im Back Buffer bspw. bei T
 
 ### Texturen
 
+Rechteckige 2D-Arrays von Pixeln (**Texel**), können auch Oberflächennormalen enthalten
+
+Aufbringen der Textur auf 3D-Objekt heißt **Texture-Mapping**
+
+1. Erzeugung Textur
+2. Spezifikation: Format, Datenquelle, Filter, Fortsetzungsmodus
+3. Zuordnung von Texturkoordinaten zu Vertizes
+
+Textur-Koordinaten aus othogonalem Koordinatensystem
+
+#### Textur-Filter
+
+Größe von Texel und Fragment in der Regel verschieden $\rightarrow$ Vergrößerung oder Verkleinerung mit Filter
+
+- GL_LINEAR
+- GL_NEAREST
+
+Bei starker Verkleinerung treten allerdings Aliasing-Artefakte auf (Moir&eacute;-Effekt) $\rightarrow$ Lösung mit vorberechnetem Tiefpass-Filter
+
+**MipMap**: Texturen in mehreren iterativ um den Faktor 2 verkleinerten Auflösungen
+
+- $1 \over 3$ mehr Speicherbedarf
+- Kombination mit linear &amp; nearest
+
+#### Textur-Fortsetzungsmodus
+
+- GL_REPEAT: Wiederholung der Textur
+- GL_CLAMP: Extrapolation der Textur
+
+Kann für beide Achsen separat definiert werden (Kombination möglich)
+
+#### Zuordnung von Texturkoordinaten zu Vertizes
+
+Dabei soll eine **möglichst gering Verzerrung** entstehen
+
+- Planares Objekt: trivial
+- Zylinder / Kegel: Mantelflächen abwickelbar
+- Kugel: nur mit Verzerrung möglich
+
+Für beliebig gekrümmte Oberflächen:
+
+- **Manuell**: Zerlegung der Oberfläche in planare Teile $\rightarrow$ jeweils Teilausschnitt
+- **Semi-Automatisch**: Rückprojektion des Dreiecksnetzes in Texturebene $\rightarrow$ manuelle Zuordnung der Texturpunkte zu Vertizes (auch über **Textur-Atlanten**: segmentierte, abgerollte Oberflächenstücke in parametrisierten Karten)
+- **Automatisch**: Projektion auf analytisch beschreibbare Zwischenoberfläche (Ebene, Zylinder, Kugel, Box) die Objekt umhüllt ("**S-Mapping**") $\rightarrow$ Abbildung auf das eigentliche Objekt ("**O-Mapping**") nach: Schwerpunkt (centroid), Normalen (surface normal), Position auf Zwischenoberfläche (position), reflektierter Augenpunktvektor (reflection)
+
 ### Fragestellungen zu Texturen
 
 - Was versteht man unter einem Texel?
@@ -941,6 +986,12 @@ Bestimmt Art der Verrechnung mit existierenden Werten im Back Buffer bspw. bei T
 - Aufgabe: gg. Ein Schachbrett bestehend aus 4 x 4 Vertices, Eine quadratische Textur, die ein 2 x 2 Schachbrett darstellt. Gesucht: Textur-Fortsetzungsmodus und Texturkoordinaten für jeden der 16 Vertices, um ein 4 x 4 Schachbrett darzustellen.
 
 ### Beleuchtung und Schattierung
+
+Beleuchtung ist entscheidend für räumliche Wahrnehmung
+
+Das **Beleuchtungsmodell** berücksichtigt auch Oberflächen-Eigenschaften
+
+Das **Schattierungsverfahren** bestimmt, wo die Beleuchtungsfunktion ausgewertet wird und wie die Farbe unbeleuchteter Fragmente bestimmt wird
 
 ### Fragestellungen zu Beleuchtung und Schattierung
 
