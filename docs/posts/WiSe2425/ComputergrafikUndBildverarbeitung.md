@@ -1,5 +1,5 @@
 ---
-date: 2025-01-23
+date: 2025-01-24
 author: Linus Englert
 timeline: false
 article: false
@@ -991,7 +991,87 @@ Beleuchtung ist entscheidend für räumliche Wahrnehmung
 
 Das **Beleuchtungsmodell** berücksichtigt auch Oberflächen-Eigenschaften
 
+- **Lokal**: berechnet nur direkte Beleuchtung, indirekte Beleuchtung wird per Ambient-Term genähert (bspw. Phong-Blinn)
+- **Global**: auch indirekte Beleuchtung wird berechnet (bspw. Radiosity, Path Tracing)
+
 Das **Schattierungsverfahren** bestimmt, wo die Beleuchtungsfunktion ausgewertet wird und wie die Farbe unbeleuchteter Fragmente bestimmt wird
+
+#### Näherungen in der Computergarfik
+
+Geometrische Optik
+
+- Verzicht auf Wellenphänomene (Interferenz, Beugung, Polarisation)
+- Vereinfachte Wechselwirkung des Lichts mit Materie: Materialkonstanten und einfache Gesetzte
+  - **Reflexion**: Einfallswinkel $=$ Ausfallswinkel
+  - **Brechung**
+  - **Dispersion**: Brechungsindex abhängig von Wellenlänge
+  - **Absorption**: Umwandlung in andere Energieform
+  - **Fresnel-Effekt**: Gleichzeitig Reflexion und Transmission (z.B. Wasser)
+
+Standardmodell der Computergrafik
+
+- RGB-Farben statt Lichtspektren (Transparenz über Alpha-Wert)
+- lokales Beleuchtungsmodell
+- keine Schatten
+- Materialeigenschaften
+  - **Diffus** und **Spekular**: beschreiben Reflexionsverhalten
+  - **Ambient**: ersetzt indirektes Licht
+  - **Emissiv**: Emission von Licht
+
+#### BRDF (Bidirectional Reflectance Distribution Function)
+
+Indirektes Licht durch Reflexion an Oberflächen
+
+Approximation durch Kombination mehrerer (lokaler) Beleuchtungsmodelle, z.B. Diffuse, Mirror und Glossy
+
+#### Phong-Blinn-Beleuchtungsmodell
+
+Variante des Standardmodells
+
+- lokales Beleuchtungsmodell, kein Schatten
+
+Materialeigenschaften
+
+- **Emissiv**
+  - allein durch Materialeigenschaft festgelegt
+  - ausstreuung gleichmäßig in alle Richtungen (nach Lambert)
+  - Ampeln, Leuchtreklame, etc.
+- **Ambient**
+  - simuliert Streulicht
+  - gleichmäßig aus allen Richtungen, gleichmäßig in alle Richtungen reflektiert (nach Lambert)
+- **Diffus**
+  - von Punktlichtquelle in einer Richtung
+  - Reflexion in alle Richtungen
+  - wichtig für Formwahrnehmung
+- **Spekular**
+  - von Punktlichtquelle in einer Richtung
+  - Reflexion überwiegend in ideale Reflexionsrichtung
+  - Spiegel- und Glanzeffekte
+  - Approximation mit **Halfway-Vektor** (Winkelhalbierende zw. Lichteinfall und Augenpunktvektor $\rightarrow$ Halfway-Vektor zu Normale entspricht in etwa Reflexionsvektor zu Augenpunktvektor und ist wesentlich einfacher zu berechnen)
+- Spiegelungs-Exponent (**Shininess-Faktor**) $S$: je größer, desto glatter die Oberfläche, desto bessere Spiegelung
+- Normalenvektor $n$ der Oberfläche
+
+Lichtquelleneigenschaften
+
+- Position im Raum
+- RGB-Intensitäten
+
+#### Schattierungsverfahren
+
+- **Flat-Shading**
+  - einmalige Auswertung $\rightarrow$ alle Fragmente eines Dreiecks bekommen selbe Farbe
+  - **Mach-Band-Effekt**: Sprünge im Helligkeitsverlauf werden wahrgenommen
+  - einfach & schnell
+- **Smooth Shading** (Gouraud-Shading)
+  - Auswertung an Eckpunkten $\rightarrow$ lineare Interpolation (durch Rasterisierer)
+  - nicht immer korrekte Darstellung von Glanzlichtern
+  - mittlerer Rechenaufwand
+- **Phong-Shading**
+  - Auswertung pro Fragment & lineare Interpolation der Normale pro Fragment (durch Rasterisierer)
+  - Auch bei grober Tesselierung korrekte Glanzlichter
+  - sehr hoher Rechenaufwand
+
+Vertex-Normalen werden aus benachbarten Flächennormalen gemittelt. Da manchmal aber klare Kanten zu sehen sein sollen wird eine Normale ab einem Grenzwinkel $\gamma$ nicht mehr zur Berechnung verwendet
 
 ### Fragestellungen zu Beleuchtung und Schattierung
 
