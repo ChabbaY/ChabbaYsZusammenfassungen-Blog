@@ -1,5 +1,5 @@
 ---
-date: 2025-01-22
+date: 2025-01-27
 author: Linus Englert
 timeline: false
 article: false
@@ -840,3 +840,105 @@ Zustandshaltung mit Zugriffsrechten & Lokalisierung, Pre-Auth oder Post-Auth
   - muss wie nicht vertrauenswürdiges Datum behandelt werden
   - muss bei Rechteänderung neu erzeugt werden
   - Lebensdauer sollte so kurz wie möglich sein (kritisch: 2-5 Minuten, niedriges Risiko: 15-30 Minuten)
+
+## 08 Software and Data Integrity Failures
+
+- **Code** und **Infrastruktur** schützen die Integrität nicht (Anwendungen, Bibliotheken)
+- **unsichere CI/CD Pipelines** (kompromittierte Systeme, Malicious Code)
+- nicht vertrauenswürdige **Updates** (fehlende Signatur, dubiose Quelle)
+
+$\rightarrow$ Angreifer können eigenen Code ausführen lassen
+
+### Gegenmaßnahmen zu Software and Data Integrity Failures
+
+- Verwendung von **Signaturen**
+- **Vertrauenswürdigkeit** eines Projektes
+  - Maturity Status
+  - AutorInnen
+- Bibliotheks- und Artefakte-Management (z.B. Nexuslib)
+- **Supply Chain** Management (z.B. OWASP Dependency Check)
+- für **Intrastructure as Code**
+  - IDE Plugins
+  - Risikoanalyse
+  - Verwaltung von **Secrets**
+  - Versionskontrolle (Transparenz)
+  - **Least Privilege** für Entwickler
+  - **Statische Analyse**
+  - **Artifact Signing**
+  - Deployment
+    - **Inventory Management**: Ressourcen labeln, tracken und loggen
+    - **Dynamische Analyse** der Interoperabilität: erkennt potenzielle Risiken
+  - zur Laufzeit
+    - bei Änderung **gesamte** Intrastruktur **neu** provisionieren
+    - aktiviertes **Logging**
+    - **Security Monitoring** (z.B. Prometheus, Grafana)
+    - Bedrohungserkennung: unerwartetes Verhalten
+
+## 09 Security Logging and Monitoring Failures
+
+Unzureichendes Logging:
+
+- **kritische Events** nicht gespeichert
+- Warnung / Fehler erzeugt fehlerhafte oder unzureichende Informationen
+- nicht überwachte oder nur lokal gespeicherte **Logfiles**
+- keine **Schwellenwerte** oder keine Überwachung von Warnungen
+- durch Penetrationstests oder Dynamic Application Security Testing Tools werden keine **Alerts** erzeugt
+- Angriffsversuche werden nicht oder nicht in **Echtzeit** erkannt
+
+### Vorteile durch Logging
+
+- Erkennung von sicherheitsrelevanten Vorfällen (**security incidents**)
+- Erkennung von Verstößen gegen eine **Policy**
+- unterstützt **Nicht-Abstreitbarkeit**
+- kann **Fehler** erkennen
+- zusätzliche Informationen für Incident Response Prozess
+
+### Sicheres Logging
+
+- Anmelde- und Zugriffssteuerung sowie serverseitige Eingabeüberprüfung sollte mit ausreichendem **Benutzerkontext** protokolliert werden $\rightarrow$ Aufbewahrung für verzögerte **forensische Analyse**
+- Logfiles in universellem **Format** $\rightarrow$ einfache Auswertung
+- korrekte **Codierung** (Vermeidung von Injection)
+- **Audit-Trail** mit Integritätskontrollen (Verhinderung von Manipulation / Löschung)
+- effektive Überwachung mit Alarmierung, um schnell reagieren zu können
+- Events für das Logging:
+  - Änderung Zugriffsberechtigung oder Konfiguration
+  - Lesen / Schreiben von sensiblen Daten
+  - Löschen
+  - Zugriffsaktionen mit Berechtigungen
+  - Authentifizierungs-Ereignisse
+  - Starten / Stoppen von Services
+- Informationen des Logevents:
+  - **Wann** (Zeitstempel)
+  - **Wo**: Anwendung, Service, Seite, Codestelle
+  - **Wer**: IP-Adresse, Benutzername
+  - **Was**: Art, Kritikalität, Sicherheitsrelevanz, Beschreibung, ggf. Ergebnisstatus
+- <ins>Nicht</ins> Teil des Logevents:
+  - Quellcode
+  - Session-Identifier, Access Token, Passwörter, private Schlüssel
+  - PII und sensible Daten
+  - Datenbank oder Verbindungsdaten
+  - Bank- oder Kreditkartendaten
+  - Business-kritische Daten
+  - Daten, die - bspw. per Gesetz - nicht gesammelt werden dürfen
+- Schutz der Logging-Informationen
+  - **At Rest**: Backup auf "read-only"-Speicher, Monitoring, eingeschränkter Zugriff
+  - **In Transit**: verschlüsselte Übertragung, Due Diligence Checks
+  - **sofortige Kopie** auf getrenntes System (z.B. via syslog-ng)
+  - massives Erzeugen von Logereignissen darf Ressourcen des Systems nicht ausschöpfen
+  - lokale Logfiles auf **getrennter Partition**
+  - Anschluss des Servers an **zentrale Zeitsynchronisierung** (NTP)
+
+## 10/2013 Unvalidated Redirects and Forwards
+
+Ungeprüfte Um- und Weiterleitung wird gerne für **Phishing**-Angriffe verwendet
+
+Manchmal steht Zielseite in unvalidiertem Parameter $\rightarrow$ kann möglicherweise für Umgehung der Autorisierung verwendet werden
+
+### Gegenmaßnahmen zu Unvalidated Redirects and Forwards
+
+- keine Redirects und Forwards verwenden
+- falls doch notwendig
+  - URL mit Allowlist prüfen
+  - nicht den Benutzerinput für die Ermittlung des Ziels verwenden
+- immer auch am Ziel die Autorisierung prüfen
+- keine URL als Parameter, sondern Wert, der serverseitig in URL übersetzt wird
