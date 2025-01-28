@@ -1065,3 +1065,118 @@ Durch eine gebrochene Sicherheitsmaßnahme sollte nur minimaler Schaden entstehe
 ## Testen von Webanwendungen
 
 **OWASP Testing Project**: Testing-Framework für eigene Tests
+
+Prinzipien für das Testen:
+
+- möglichst weitreichend denken
+- am besten im Rahmen eines SDLC
+- früh beginnen
+- Verständnis entwickeln
+- die richtigen Werkzeuge verwenden
+  - **manuelle Reviews**: überprüft Auswirkungen auf die Sicherheit (Analyse der Dokumentation, Interviews mit Architekten / System Owner)
+    - flexibel einsetzbar, aber aufwändig in der Durchführung
+    - erfordert guten Umgang mit Menschen
+  - **Bedrohungs- und Risikoanalyse**: Bedrohungen frühzeitig erkennen können
+  - **Code Review**: manuelle Überprüfung des Quellcodes
+    - viele Verwundbarkeiten können gar nicht gefunden werden (Bibliotheken, Laufzeitfehler, etc.)
+    - häufige Fehler, offensichtliche Schwachstellen, Schadcode, etc. kann eliminiert werden
+  - **Penetration Testing**
+    - schnelle Durchführung, aber prüft nur "erste Verteidigungslinie" (falls diese hält)
+- auf Details achten
+- Metriken entwickeln
+- Ergebnisse dokumentieren
+
+### Penetration Testing
+
+**Black Box Test** aus **Sicht eines Angreifers** (teilweise mit automatisierten Tools)
+
+#### Sammeln von Informationen
+
+Anfangs **passive** Tests (Google, wget, etc.)
+
+- Ressourcen entdecken und festhalten
+  - Webseite netcraft
+- Versionsnummern herausfinden (**Fingerprinting**): httprint
+- verfügbare Anwendungen analysieren
+  - manche Webserver haben typische Header-Reihenfolge
+  - **Portscanner**: nmap
+- ggf. Fehlermeldungen analysieren
+
+#### Überprüfungen
+
+Configuration Management ("schwache Konfiguration")
+
+- schwache Verschlüsselung
+- Behandlung von File Extensions
+- alte Dateien $\rightarrow$ Hinweise auf Aufbau der Anwendung
+- Admin Interfaces
+- zu umfangreiche Fehlermeldungen
+- Directory Traversal
+
+Authentifikation
+
+- unsichere Übermittlung von Credentials
+- User Enumeration
+- Brute Force
+- mögliche Umgehungen
+- Nebenläufigkeitsprobleme (Race Conditions)
+
+Session Management
+
+- Session Hijacking
+- Session Fixation
+- CSRF
+- Cookies falls verwendet
+  - fehlendes Secure Attribut
+  - ungeschützte Übermittlung
+  - Ablaufzeiten
+  - Cache Einstellungen
+
+Autorisierung
+
+- Rechtezuweisung
+- Directory Traversal
+- Privilege Escalation
+- mögliche Umgehungen
+
+Business Logic
+
+- mögliche Brechung der Anwendung durch ungewähnliche Reihenfolge von Aktionen
+
+Daten-Validierung
+
+- Input Validation
+- XSS
+- Injections
+
+Denial of Service
+
+- SQL Wildcard Attack $\rightarrow$ sehr aufwändige Suche durch komplizierten Vergleich
+- Buffer Overflows
+
+AJAX Testing
+
+### OWASP Testing Framework
+
+- Phase 1: **vor** der Entwicklung
+  - Dokumentation der Security Policies
+  - Reviews bestehender Regeln
+  - Sicherheitsbedarf feststellen
+  - Metriken und Mess-Zeitpunkte festlegen
+- Phase 2: während des **Designs**
+  - Annahmen prüfen
+  - Überprüfung der sicherheitsrelevanten Mechanismen
+  - Überprüfung der Architektur (und dass diese ausreichend dokumentiert ist)
+  - Bedrohungs- und Risikoanalyse
+- Phase 3: während der **Implementierung**
+  - Code Review
+  - Code Walkthroughs
+  - am Ende: Penetration Testing
+- Phase 4: während des **Deployments**
+  - "Last Minute Penetration Testing": erfahrungsgemäß notwendig
+  - überprüft auch korrekte Konfiguration
+- Phase 5: während des **Betriebs**
+  - Anwendung aktuell halten (Application Patching)
+  - Policies regelmäßig prüfen
+  - Penetration Testing nach vorgegebenem Zeitplan (Health Check)
+  - Quality Assurance für ALLE Änderungen
