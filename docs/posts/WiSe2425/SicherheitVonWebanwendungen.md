@@ -1,5 +1,5 @@
 ---
-date: 2025-01-27
+date: 2025-01-28
 author: Linus Englert
 timeline: false
 article: false
@@ -942,3 +942,126 @@ Manchmal steht Zielseite in unvalidiertem Parameter $\rightarrow$ kann mögliche
   - nicht den Benutzerinput für die Ermittlung des Ziels verwenden
 - immer auch am Ziel die Autorisierung prüfen
 - keine URL als Parameter, sondern Wert, der serverseitig in URL übersetzt wird
+
+## Prinzipien sicherer Webanwendungen
+
+### 1. Kenne das Sicherheitsmodell des verwendeten Frameworks
+
+"Kenne deinen Werkzeugkasten"
+
+- **Session Management**, Datenbankzugriff, etc.
+- Unterstützung durch **Browser-Features**
+  - **Sandboxing**: Separation des Codes und Zugriffsregeln $\rightarrow$ Schutz des Clients vor schädlichem Code
+  - **Same-Origin Policy**: Begrenzung auf einen einzigen Kontext (Protokoll, Host & Port)
+- oft nicht bekannt oder falsch eingesetzt
+
+### 2. Vertraue nicht dem Client
+
+"You handshake with your client, but you never trust it"
+
+Wenn ein Angreifer den Client kontrolliert
+
+- veränderte **Verarbeitungsreihenfolge** $\rightarrow$ z.B. **XSS**
+- veränderte Daten: z.B. Ablaufdatum in Cookie, Hidden Field, ...
+- erneutes Einspielen alter Daten: bspw. wenn Zustandshaltung in Cookie
+- veränderte **Metadaten**: bspw. Zugriff ohne Login für GoogleBot UserAgent $\rightarrow$ Änderung des UserAgent im Request
+- client-seitige Ausführung von Code: Veränderung im lokalen JavaScript
+
+Daher
+
+- wichtige Entscheidungen nur auf dem Server treffen: Authentifizierung, Autorisierung, kritische Entscheidungen
+- Daten an den Client als öffentlich betrachten
+- **Input-Validierung** auf dem Server
+- **Paranoides Vertrauensmodell**: "Vertraue nur dem, was du selbst beobachtest"
+
+### 3. Vermeide die Nutzung gefährlicher Methoden
+
+"eval() ist evil" (kompiliert String und führt diesen aus)
+
+auch problematisch: setTimeout(), setInterval() und Function Constructor
+
+### 4. Verwende sichere Kommunikation
+
+Wo möglich **SSL / TLS** (inkl. gültiges Zertifikat)
+
+### 5. Härte den Web-Server
+
+Erhöhung der Sicherheit durch **Reduzierung der Angriffsfläche** (Konfiguration oder Erweiterung)
+
+- Deaktivierung nicht benötigter Dienste
+- Einsatz gehärteter Betriebssysteme
+- Einspielen von **Patches**
+
+Bei Linux
+
+- Dienste bekommen **Service Account** ohne Login Shell (/bin/false) und mit minimalen Rechten
+- Verzeichnis-Rechte maximal beschränken, durch **umask** vorgeben
+- Passwortrichtlinie, Tarpitting um Bruteforce zu verlangsamen
+- ssh Konfiguration anpassen: Port, kein root Login, ...
+- Speicherverbrauch und Rechenzeit limitieren (ulimit)
+- Prioritäten setzen (nice)
+
+Bei Apache
+
+- Versionsnummern aus Fingerprint entfernen
+- unsichere Request-Methoden deaktivieren
+- Zugriff auf Infos über Server-Status/Infos einschränken
+- Anzahl Zugriffe beschränken
+- SSL konfigurieren
+
+Bei PHP
+
+- Fingerprinting verhindern
+- Anzeige von Fehlermeldungen deaktivieren
+- Verzeichniszugriff beschränken
+- temporäres Verzeichnis für Uploads
+- Deaktivierung bestimmter Funktionen / Klassen
+
+### 6. Beschränke die Komplexität auf das Notwendige
+
+"Keep it simple, stupid" (**KISS**)
+
+- verbesserte Wartbarkeit
+- Übersichtlichkeit
+
+### 7. Verwende Security Patterns wo möglich
+
+- **Role-based Access Control**
+- **Client Input Filters**, **Intercepting Validator**
+- **Authentication / Authorization Enforcer**
+- **Secure Base Action**
+  - Sicherheitsaktionen gebündelt in einem Modul
+- **Secure Logger**, **Secure Storage**
+- **Secure Session Manager**
+- **Web Agent Interceptor**
+  - Proxy vor Webserver, welcher Security Policies erzwingt
+- ...
+
+### 8. Defense in Depth
+
+"Man kann nie genug Sicherheitsmaßnahmen in Stellung haben"
+
+- nicht nur auf eine Schutzmaßnahme verlassen, sozusagen Redundanz
+- verschieden Produkte und Hersteller
+- "wie eine Artischocke" aufbauen
+
+### 9. Check at the Gate
+
+"Lass keinen Angreifer in dein Haus"
+
+**Perimeterschutz**: eingehenden Verkehr so früh wie möglich prüfen
+
+### 10. Fail securely
+
+Durch eine gebrochene Sicherheitsmaßnahme sollte nur minimaler Schaden entstehen können
+
+### 11. Secure Defaults
+
+"Stelle Sicherheit von Anfang an sicher" $\rightarrow$ sichere Grundeinstellungen
+
+- maximal geschützte Accounts
+- i.d.R. schlechtere Usability
+
+## Testen von Webanwendungen
+
+**OWASP Testing Project**: Testing-Framework für eigene Tests
