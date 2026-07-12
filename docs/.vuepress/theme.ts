@@ -9,8 +9,6 @@ export default hopeTheme({
     name: "Linus Englert"
   },
 
-  iconAssets: "fontawesome-with-brands",
-
   logo: "https://bilder.chabbay.de/icon.png",
 
   repo: "ChabbaY/ChabbaYsZusammenfassungen-Blog",
@@ -57,6 +55,10 @@ export default hopeTheme({
 
     components: {
       components: ["Badge", "VPCard"],
+    },
+
+    icon: {
+      assets: "fontawesome-with-brands"
     },
 
     // all features are enabled for demo, only preserve features you need here
