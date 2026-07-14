@@ -7,6 +7,20 @@ article: false
 
 # AI for Games
 
+## Important
+
+- exercises
+- be able to interpret formulas
+- content:
+  - Spatial Publish Subscribe
+  - Bulk Load
+  - Persistence Protocols
+  - Deterministic Planning
+  - Non-Deterministic: Bellman Equation, how to apply update
+  - Abstract State Spaces (free text)
+  - Multi Agents (free text)
+  - Elo Updates
+
 ## Introduction
 
 ### Games
@@ -209,3 +223,48 @@ article: false
 - Application:
   - **server side** processing where **accuracy & chronological order** are most important (e.g. damage, healing, item pickup)
   - **client side** processing where **response time** is most important (e.g. movements, animations, effects)
+- Communication:
+  - usually small package sizes & little bandwith
+  - required latencies:
+    - RTS < 1000 ms
+    - RPG < 500 ms
+    - FPS < 100 ms
+  - TCP/IP for most cases but retransmits may increases latency
+  - UDP for just-in-time services (voice, movement, etc.)
+  - other protocols do not show a significant increase in performance
+
+### Dead Reckoning
+
+- movement has to be calculated locally for fluid rendering
+- aspects:
+  - **Update Strategy**: frequency of synchronization (bandwidth vs. error rate)
+    - **regular update**: fixed time interval
+    - **event based update**: on changing direction or movement type
+    - **distance-based update**: different rates, depending on distance (weapon range most important)
+  - **Movement Model**: extrapolation between transmitted positions (error rate vs. movement perception)
+    - Linear movement with constant speed
+    - Linear movement with constant acceleration
+  - **Error Correction**: may improve perception, but increases processing time
+    - if predicted position differs from actual
+    - **Hermite graphs** for polynomial smoothing: linear combination of different polynomials
+
+## Persistence
+
+### Replays & Save Games
+
+- Save Games allow later resuming and preserve a consistent game state in case of a crash
+- only important parts are saved
+- Replays allow retracing a game for analysis but can grow quite large
+- should not slow down (within tick) & should be as up-to-date as possible
+- methods:
+  - **State-Log**: series of (full) game states
+    - Pro: loading is simple
+    - Con: high redundancy, large data volume
+  - **Transition-Log**: changes are logged with time, entity, attribute, new value
+    - Pro: more compact, less effort to save
+    - Con: reconstruction is more complex
+  - **Action-Log**: sequence of all user inputs
+    - Pro: compact, no redundancies
+    - Con: expensive reconstruction (re-playing on game)
+
+### Checkpoint Recovery Methods
