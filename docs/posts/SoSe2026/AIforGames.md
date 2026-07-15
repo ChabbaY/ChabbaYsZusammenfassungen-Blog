@@ -266,5 +266,108 @@ article: false
   - **Action-Log**: sequence of all user inputs
     - Pro: compact, no redundancies
     - Con: expensive reconstruction (re-playing on game)
+- place:
+  - Database: structured, consistent, recoverable, fast access but more processing time
+  - Log-Files: fast save but no efficient access & system errors possible
+  - Hybrid Architecture: Log-Files are inserted into database on a persistence server
 
 ### Checkpoint Recovery Methods
+
+- checkpoints are used to save with minimal overhead inside game loop
+- information is copied to shadow memory first
+- allows persistence layer to be slower
+- classic strategies: bulk copy / selective copy, locking, dirty-bits
+- **Naive-Snapshot**:
+  - everything is copied to shadow memory, then written to disk from shadow memory
+  - no overhead, efficient for large num. of changes but copying whole game state may cause lags
+- **Selective Copy**:
+  - dirty-bit is set on change, dirty objects are saved & bits reset
+  - only considers changed objects but bit resets cause overhead
+- **Wait-Free Zigzag**:
+  - Flags:
+    - **MW** (write): where is written to, opposite is read
+    - **MR** (read): = MW on write
+    - end of period: if MW == MR, flip MW
+  - changes over time possible without locking but bit reset required
+- **Wait-Free Ping-Pong**
+  - 3 Game States: GS, Odd, Even
+  - raed & write is swapped between Odd & Even with each period
+  - no locking or bit reset but triple memory requirement
+
+## Agents
+
+- **Policy**: $\pi$ mapping between states S & actions A
+  - can be stochastic: likelihood of taking action a in state s
+  - determined by environment, purpose & policy function
+  - goals:
+    - provide elements of game design (e.g. monsters)
+    - act human-like
+    - maximizing reward
+    - minimizing cost
+  - types:
+    - **Reflex Agent**: set of rules with particular order
+      - no optimization (heuristics, learned or pre-optimized)
+      - usually very efficient
+    - **Model-Based Reflex Agent**
+      - internal state resulting from recent observations as current state alone might not be enough
+      - e.g. follow object that is not visible all the time
+    - **Goal-Based Reflex Agent**
+      - reward / cost function $\rightarrow$ planning ahead to maximize reward
+    - **Utility-Based Agent**
+      - based on MDP
+      - non-deterministic: based on cumulated expected reward (utility)
+    - **Learning Agents**: Reinforcement Learning
+      - approximation of utility function or directly learning a policy function
+      - can transfer reasonable policies from similar settings
+    - special:
+      - Imitation Learning
+      - Multi-Agent
+- **Observability**: game state or part of
+  - fully observable: e.g. board games
+  - partial observable: e.g. fog of war
+    - deciding on abstraction of true state
+- **Non-Detereminism**: usually part of games to keep them challenging
+- the environment might change as well
+- there may be a goal
+- collaborative vs. antagonistic setting
+- with / without **known model** (exact rules are known)
+
+## Deterministic Planning
+
+- non-deterministic problems are often solved by making it deterministic and then solving it
+- example: assumption that opponent uses same (optimal) policy
+- search trees & graphs: nodes are states, edges are transitions
+- for an infinite horizon, not all policies may terminate
+
+### Algorithms
+
+- **Breadth First Search** (BFS):
+  - computes paths in order of length $\rightarrow$ finds path with minimum steps (not necessarily cost)
+  - needs much memory
+- **Uniform Cost-Search** (aka Dijkstra):
+  - BFS but based on cost: with priority queue, extending minimal cost path
+  - cycles may occur if not cost increases monotonically along paths
+- **Depth First Search** (DFS):
+  - extending one path until termination, then the next
+  - infinite path problem
+- **Depth Limited Search** & **Iterative Deepening**
+  - multiple DFS runs with increasing depth limit
+- Informed Search: **A* Search**
+  - heuristic maps current state to estimate of remaining costs / rewards (Best First Search)
+  - has lower bound for remaining cost: for less cost no extension is necessary any more
+
+### Visibility Graphs
+
+- an environment of polygons (obstacles)
+- connects corners of poygons where it does not intersect with polygon borders
+- start & end node are connected
+- for extended objects
+  - circles have infinite edges $\rightarrow$ graph not derivable
+  - for polygons: rotation should be considered
+  - solution: rotate polygon & minimal surrounding polygon (hexagon, octagon, etc.)
+- with basic abstraction
+  - approximate polygons with less corners
+  - pre-calculating routes
+  - grid-based graph $\rightarrow$ decent approximization
+
+## Non-Deterministic Planning
