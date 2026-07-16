@@ -21,9 +21,9 @@ article: false
   - Multi Agents (free text)
   - Elo Updates
 
-## Introduction
+## I. Introduction
 
-### Games
+### A. Games
 
 - Interaction, Experience, Learning & Mastering
 - First success: PONG (Atari 1972)
@@ -54,7 +54,7 @@ article: false
   - Jump 'n' Run: Super Mario
   - Singing, Music, Rythm Games: Sing Star
 
-### AI
+### B. AI
 
 - analyze & generate behavior of game entities
 - **Environment**:
@@ -82,7 +82,7 @@ article: false
   - known action set
   - available experience (observing humans, simulating gameplay)
 
-## Game Core
+## II. Game Core
 
 - **Game State**:
   - objects, attributes, relationships, etc.
@@ -118,9 +118,9 @@ article: false
   - continuous time Markov chains would additionally need to predict the next time a transition might happen
   - inhomogenous processes allow the transition function to vary for different times (i.e. at night)
 
-## Spatial Management
+## III. Spatial Management
 
-### Spatial Queries
+### A. Spatial Queries
 
 - get game entities within interaction range: Area of Interest (**AoI**)
 - for small game worlds, sequential scans over a list would be sufficient $\rightarrow$ processing cost strongly increases with game state
@@ -148,7 +148,7 @@ article: false
   - Pro: close-by objects can be found efficiently & no query is necessary as changes are sent actively to subscribers
   - Con: zones can be overcrowded, too much overhead if zones are small, high change-rate can increase overhead & slow down system
 
-### Index Structures
+### B. Index Structures
 
 - spatial search trees with restricted number of objects per page region
 - **page region**: surrounds several objects
@@ -191,9 +191,9 @@ article: false
     - changing existing data structure is more expensive than rebuilding with bulk load
   - use tree only if tree creation & query on tree is faster than brute force query processing
 
-## Distributed Games
+## IV. Distributed Games
 
-### Distributed Architecture
+### A. Distributed Architecture
 
 - **Client-Server**:
   - centralized solution for account-management, partitioning game-world, monitoring, persistence
@@ -233,7 +233,7 @@ article: false
   - UDP for just-in-time services (voice, movement, etc.)
   - other protocols do not show a significant increase in performance
 
-### Dead Reckoning
+### B. Dead Reckoning
 
 - movement has to be calculated locally for fluid rendering
 - aspects:
@@ -248,9 +248,9 @@ article: false
     - if predicted position differs from actual
     - **Hermite graphs** for polynomial smoothing: linear combination of different polynomials
 
-## Persistence
+## V. Persistence
 
-### Replays & Save Games
+### A. Replays & Save Games
 
 - Save Games allow later resuming and preserve a consistent game state in case of a crash
 - only important parts are saved
@@ -271,7 +271,7 @@ article: false
   - Log-Files: fast save but no efficient access & system errors possible
   - Hybrid Architecture: Log-Files are inserted into database on a persistence server
 
-### Checkpoint Recovery Methods
+### B. Checkpoint Recovery Methods
 
 - checkpoints are used to save with minimal overhead inside game loop
 - information is copied to shadow memory first
@@ -294,7 +294,7 @@ article: false
   - raed & write is swapped between Odd & Even with each period
   - no locking or bit reset but triple memory requirement
 
-## Agents
+## VI. Agents
 
 - **Policy**: $\pi$ mapping between states S & actions A
   - can be stochastic: likelihood of taking action a in state s
@@ -332,14 +332,14 @@ article: false
 - collaborative vs. antagonistic setting
 - with / without **known model** (exact rules are known)
 
-## Deterministic Planning
+## VII. Deterministic Planning
 
 - non-deterministic problems are often solved by making it deterministic and then solving it
 - example: assumption that opponent uses same (optimal) policy
 - search trees & graphs: nodes are states, edges are transitions
 - for an infinite horizon, not all policies may terminate
 
-### Algorithms
+### A. Algorithms
 
 - **Breadth First Search** (BFS):
   - computes paths in order of length $\rightarrow$ finds path with minimum steps (not necessarily cost)
@@ -356,7 +356,7 @@ article: false
   - heuristic maps current state to estimate of remaining costs / rewards (Best First Search)
   - has lower bound for remaining cost: for less cost no extension is necessary any more
 
-### Visibility Graphs
+### B. Visibility Graphs
 
 - an environment of polygons (obstacles)
 - connects corners of poygons where it does not intersect with polygon borders
@@ -370,4 +370,123 @@ article: false
   - pre-calculating routes
   - grid-based graph $\rightarrow$ decent approximization
 
-## Non-Deterministic Planning
+## VIII. Non-Deterministic Planning
+
+- rewards / cost get stochastic as we do not know the future
+- agents need to prepare for all situations they might encouter, not just one path
+- **Markov Reward Process** (MRP): likelihood that episodes include rewards, fixed action for each state
+  - **S**tates, **P**robability matrix (transitions), **R**eward function, discount factor $\gamma$
+- **Markov Decision Process** (MDP): considers actions & their impacts, allows comparison of different policies in same environment
+  - in addition to MRP: **A**ctions
+- horizon:
+  - finite: $\gamma = 1 \rightarrow$ future rewards equally weighted
+  - infinite: usually $\gamma < 1 \rightarrow$ future rewards less weighted; needed to reach a termination
+
+### A. Evaluating Policies
+
+- Predicting Reward of following policy $\pi$: **Bellman's Equations**
+
+![Bellman Equations](img/bellman.png)
+
+![Bellman Optimality Equation](img/bellman_optimality.png)
+
+- **Policy Evaluation**: simpler than solving Bellman Optimality
+  - solving MRP as linear equation system (operations research)
+  - for large state spaces: **Bellman Update**
+
+![Bellman Update](img/bellman_update.png)
+
+- **Policy Iteration** (prediction & control):
+  - alternates between **Policy Evaluation** & **Policy Improvement**
+
+![Policy Improvement](img/policy_improvement.png)
+
+- **Value Iteration** (control)
+  - direct updates from Bellman Optimality equation
+  - solve non-linear system of equations with **Dynamic Programming**
+
+### B. Partial Observability
+
+- only part of the game state can be observed
+- **Partially Observable MDP** (**POMDP**): MDP with hidden states
+  - **S**tates, **A**ctions, **O**bservations, **P**robability matrix, **R**eward function, observation function **Z** (likelihood to observe o for a in s'), discount factor $\gamma$
+  - an MDP over **Belief States**:
+    - probability distribution over states, based on history
+    - computed from previous belief state, action & observation
+  - finding the optimal policy for a POMDP needs to solve a continuous state space MDP $\rightarrow$ potentially infinite number of states
+    - **Fixed Conditional Plans**: spans all action-observation sequences of a certain length
+      - tree structure describing a complete policy
+      - allows computing value function with certain horizon
+
+### C. More MDPs
+
+- **QMDP**: assumes full observability after the next step
+- **Dynamic Programming** with **asynchronous** backups
+  - unlikely states might never be visited under optimal policy
+  - **In-place Dynamic Programming**:
+    - update value function with each single state directly $\rightarrow$ less memory required & always working on most recent version of the value function
+  - **Prioritised Sweeping**:
+    - update state with largest Bellman error first & update Bellman errors of affected states
+  - **Real-time Dynamic Programming**:
+    - agent selects visited states based on experience
+- **Replanning**:
+  - compute most likely future
+  - if the resulting state after an action is not expected, recompute next steps
+  - works well if wrong decisions can be corrected at any time
+
+## IX. Reinforcement Learning
+
+- **Model-Free Reinforcement Learning**: the model is not known but relevant parts might be learned from experience
+- **exploration**: agents must gather information about unknown state-action pairs
+- **exploitation**: agents should employ the current policy to evaluate its performance
+- **Monte Carlo Policy Evaluation**:
+  - sampling a set of episodes from policy $\rightarrow$ value function converges
+  - incremental update
+  - simple to use & no bias but high variance (slow convergence)
+  - needs sufficient number of samples
+- **Temporal Difference Learning**:
+  - similar to incremental Monte Carlo learning
+  - mean utility is estimated incrementally
+  - low variance (fast convergence) but is biased (from mean expectation of the future)
+  - works also with limited sample size
+- **$\epsilon$-Greedy Exploration**:
+  - sampling should consider new actions
+  - with probability $\epsilon$ a random action is chosen
+- **Policy Optimization**:
+  - evaluate policy & update greedily
+- **Monte Carlo Policy Iteration**:
+  - sampling episodes from environment
+  - uses Monte Carlo Policy Evaluation
+- **SARSA (State Action Reward State Action)**:
+  - TD applied to the q-function
+  - $\epsilon$-greedy updates
+- **Off-Policy Learning**
+  - observe behavior of another policy (humans / other agents) $\rightarrow$ find better policy
+  - reuses existing experience
+  - **TD with importance sampling**:
+    - importance sampling needed as rewards stay the same but distribution over states changes
+    - much lower variance than MC importance sampling
+  - **Q-Learning**:
+    - nedds no importance sampling
+    - next action selected based on policy but updates on alternate successor
+
+## X. Abstract State Spaces
+
+- instead of states, descriptions of states like feature vectors are used (**continuous State Space**)
+  - can describe infinite set of states
+  - state descriptions can be related $\rightarrow$ derive action for new state from similar situation $\rightarrow$ agent can cope with unknown situations
+  - function instead of big table $\rightarrow$ more space-efficient
+  - methods:
+    - **Value function approximation**: learning a function that describes the value function v(S) or state-value function q(S,A)
+      - **Mean Squared Value Error** to evaluate quality
+      - methods:
+        - **Linear predictors** (special case: **Table Lookup Features**)
+        - Neural networks
+        - Decision trees
+        - Regression with Fourier/Wavelet bases
+    - **Policy gradient** methods: directly learn a function to predict the best action
+    - **Actor Critic** methods
+
+## XI. Multi-Agent Settings
+
+## XII. Game Analytics
