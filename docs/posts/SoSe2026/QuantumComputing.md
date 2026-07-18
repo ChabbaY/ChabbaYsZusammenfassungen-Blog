@@ -115,8 +115,8 @@ $$\hat{\alpha} = \frac{1}{\sqrt{2}}(\alpha + \beta),~\hat{\beta} = \frac{1}{\sqr
 
 y-axis
 $$\ket{i} = \frac{1}{\sqrt{2}}(\ket{0} + i\ket{1}),~\ket{-i} = \frac{1}{\sqrt{2}}(\ket{0} - i\ket{1})$$
-$$\~\alpha \ket{i} + \~\beta \ket{-i}$$
-$$\~\alpha = \frac{1}{\sqrt{2}}(\alpha - i\beta),~\~\beta = \frac{1}{\sqrt{2}}(\alpha + i\beta)$$
+$$\tilde{\alpha} \ket{i} + \tilde{\beta} \ket{-i}$$
+$$\tilde{\alpha} = \frac{1}{\sqrt{2}}(\alpha - i\beta),~\tilde{\beta} = \frac{1}{\sqrt{2}}(\alpha + i\beta)$$
 
 on measurement the superposition w.r.t. the measurement basis is destroyed and one of the two corresponding basis states is assumed
 
@@ -202,6 +202,28 @@ example circuit:
 ![Entanglement Swapping](img/entanglement_swapping.png)
 
 ### D. Bell's Inequality & No-Communication Theorem
+
+when an entangled qubit is measured, the state of the other one immediately collapses into the corresponding state. At first glance this looks like information can propagate faster than the speed of light during the measurement or hidden local variables would predetermine measurement outcomes during entanglement
+
+to prove the correctness of quantum mechanics, John Bell proposed an experiment in 1964
+
+two qubits are entangled (e.g. $\ket{\beta_{00}}$), then separated and measured in different bases; certain values will be measured more frequently than would be possible in a classical model
+
+#### CHSH Inequality
+
+there are four measurement bases: A, A', B, B', each obtains an eigenvalue $+1/-1$
+
+![CHSH Inequality](img/chsh_inequality.png)
+
+$$A(B + B') + A'(B - B') = \pm 2$$
+
+$$S = |E(AB) + E(AB') + E(A'B) + E(A'B')| \leq 2$$
+
+the CHSH inequality is violated with certain states; it disproved Einstein's theory of hidden local variables
+
+#### No Communication Theorem
+
+despite of the entanglement of qubits, no information transmission faster than light is possible
 
 ## IV. Quantum Key Distribution (QKD)
 
