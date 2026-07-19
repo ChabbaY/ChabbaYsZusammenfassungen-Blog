@@ -1,5 +1,5 @@
 ---
-date: 2026-07-12
+date: 2026-07-19
 author: Linus Englert
 timeline: false
 article: false
@@ -299,15 +299,78 @@ as all classical circuits can be formed from these gates, they can all be mapped
 
 ### A. Deutsch Algorithm
 
+determine if function is constant or balanced: first demonstrated quantum advantage but no practical use
+
+only needs one call to the oracle, compared to two on a classical computer
+
+![Deutsch Algorithm](img/deutsch_algorithm.png)
+
+oracle is applied on superposition over all possible function inputs, the subsequent Hadamard gates cause **interference**
+
+the function is constant for a measured $\ket{0}$ and balanced for a measured $\ket{1}$
+
 ### B. Hadamard on Quantum Register
+
+for simplicity, a notation is introduced that applies $n$ Hadamard gates to a register of $n$ qubits:
+$$H_n \ket{x} = \frac{1}{\sqrt{2^n}} \sum_{z = 0}^{2^n - 1} (-1)^{x \circ z} \ket{z}$$
 
 ### C. Deutsch-Josza Algorithm
 
+generalization of Deutsch's problem: operating over $n$ qubits
+
+one query instead of $2^{n - 1} + 1$
+
+![Deutsch-Josza Algorithm](img/deutsch_josza_algorithm.png)
+
+again **phase kickback** encodes information about the function in the phase of the input register; looking at its amplitude yields the result
+
+a constant function leads to $\ket{0 \ldots 0}$ being measured with certainty, while destructive interference prevents it from being measured for a balanced function
+
 ## VII. Grover's Algotithm
+
+also using interference to obtain information about an oracle
+
+searching an element in an unsorted database with $O(\sqrt{N})$ instead of $O(N)$
+
+an oracle maps (all) search element(s) to $\ket{1}$ and all others to $\ket{0}$; applying the oracle to the superposition makes the **amplitude negative** at exactly this point (but still measurement probabilities are equally distributed)
+
+### A. Amplitude Amplification
+
+**reflecting** an amplitude $a$ around the mean value $m$:
+$$a \mapsto 2 \cdot m - a$$
+
+![Amplitude Amplification](img/amplitude_amplification.png)
+
+### B. Grover Iterations
+
+the measurement probability of the correct result should be high but after a certain number of iterations the effect is canceled out
+
+the probability is exactly one after $\frac{\pi}{4} \sqrt{\frac{N}{k}}$ iterations when searching for $k$ solutions in $N$ elements
+
+to make sure that the probability does not decrease again, we use the following number of iterations to measure a searched element with almost certainty:
+$$\left\lfloor \frac{\pi}{4} \sqrt{\frac{N}{k}} \right\rfloor$$
+
+### C. Quantum Circuit
+
+the **Grover diffusion** operator $D_n$ expresses amplitude amplification as a uniary operator
+
+![Grover Iteration](img/grover_iteration.png)
 
 ## VIII. Variational Quantum Algorithms (VQAs)
 
 ## IX. Quantum Fourier Transform (QFT)
+
+### A. Discrete Fourier Transform & Fast Fourier Transform
+
+![$DFT_4$ Matrix](img/dft4.png)
+
+### B. Quantum Fourier Transform
+
+![QFT for 3 Qubits](img/qft3.png)
+
+### C. Period Finding Algorithm
+
+![Period Finding Algorithm](img/period_finding_algorithm.png)
 
 ## X. Shor's Algorithm
 
