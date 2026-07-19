@@ -227,15 +227,73 @@ despite of the entanglement of qubits, no information transmission faster than l
 
 ## IV. Quantum Key Distribution (QKD)
 
+Shor's algorithm is a threat to classical assymetric encryption; QKD allows for save cryptographic key exchange after Q-Day
+
+all those protocols are based on **BB84** & **E91**
+
+both protocols require an authenticated classical channel
+
+classical: Diffie-Hellman key exchange
+
 ### BB84 Protocol
 
+by Charles Bennett & Gilles Brassard: uses quantum effects but requires **noise-free** quantum channel
+
+![BB84 Protocol](img/bb84.png)
+
+for $a' = b'$, a and b are the same and can be used as key, the process is repeated several times and only the valid bits are taken (after comparison of a' and b')
+
+an attacker does not know in what basis to measure, also disturbance in the quantum channel can be detected upon comparison of the generation-bits
+
 ### E91 Protocol
+
+by Artur Ekert: two entangled qubits are measured in different bases
+
+the bases depend on the chosen Bell state, here $\ket{\beta_{01}}$:
+
+![E91 Measurement Bases](img/e91_bases.png)
+
+for key generation: $A_1/B_1$ and $A_3/B_2$
+
+attacks can be detected: CHSH inequality **not** violated
+
+- input bases: $A_1/B_2$, $A_1/B_3$, $A_2/B_2$, $A_2/B_3$
+- the violation of the CHSH inequality proves that the qubits were isolated and did not interact with the outside world
 
 ## V. Quantum Complexity
 
 ### A. Classical Complexity
 
+an algorithm is **efficient** if it solves a problem in polynomial runtime for all instances
+
+![Classical Complexity Classes](img/classical_complexity.png)
+
+- **P**: problem can be efficiently solved
+- **NP**: problem can be efficiently verified
+- **NP-complete**: a problem in NP that every problem in NP can be reduced to in ploynomial time
+- **NP-hard**: a problem (possibly) outside NP that every problem in NP can be reduced to in polynomial time
+- **PSPACE**: problem only takes polynomial memory
+- **BPP** (Bounded error Probabilistic Polynomial time): problem can be solved efficiently with a bounded error probability (randomized algorithms) < 50%
+
 ### B. Quantum Complexity
+
+#### Bounded error quantum polynomial time (BQP)
+
+class of probabilistic decision problems as quantum algorithms include randomness (analogue to BPP)
+
+if the correct solution is produced with a probability $\geq \frac{2}{3}$ and by uniform quantum circuits of polynomial size
+
+to show that the following holds and $BPP \subseteq BQP$ we will show that quantum circuits can be created from every classical circuit with only polynomial overhead
+
+![Quantum Complexity](img/quantum_complexity.png)
+
+classical AND, OR and XOR are not reversible as they map two inputs to one output
+
+toffoli gates can be used to create these gates:
+
+![Classical Gates from Toffoli Gates](img/toffoli_constructs.png)
+
+as all classical circuits can be formed from these gates, they can all be mapped to quantum circuits that are at most a linear factor larger
 
 ## VI. Quantum Algorithms
 
