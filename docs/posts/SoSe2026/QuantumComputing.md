@@ -38,7 +38,8 @@ $$\ket{\psi} = \cos \left(\frac{\theta}{2}\right) \ket{0} + \sin \left(\frac{\th
 ### A. Quantum Gates
 
 **Pauli Gates**:
-$$I,~X = \begin{pmatrix}0 & 1 \\ 1 & 0\end{pmatrix},~Y = \begin{pmatrix}0 & -i \\ i & 0\end{pmatrix},~Z = \begin{pmatrix}1 & 0 \\ 0 & -1\end{pmatrix}$$
+$$I,~X = \begin{pmatrix}0 & 1 \\ 1 & 0\end{pmatrix},$$
+$$Y = \begin{pmatrix}0 & -i \\ i & 0\end{pmatrix},~Z = \begin{pmatrix}1 & 0 \\ 0 & -1\end{pmatrix}$$
 
 - $X \ket{0} = \ket{1},~X \ket{1} = \ket{0}$
 - $Y \ket{0} = i\ket{1},~Y \ket{1} = -i\ket{0}$
@@ -109,12 +110,14 @@ usually in  **computational basis** $\{\ket{0}, \ket{1}\}$ (the z-axis): $\alpha
 #### Measuring in other bases
 
 x-axis
-$$\ket{+} = \frac{1}{\sqrt{2}}(\ket{0} + \ket{1}),~\ket{-} = \frac{1}{\sqrt{2}}(\ket{0} - \ket{1})$$
+$$\ket{+} = \frac{1}{\sqrt{2}}(\ket{0} + \ket{1}),$$
+$$\ket{-} = \frac{1}{\sqrt{2}}(\ket{0} - \ket{1})$$
 $$\hat{\alpha} \ket{+} + \hat{\beta} \ket{-}$$
 $$\hat{\alpha} = \frac{1}{\sqrt{2}}(\alpha + \beta),~\hat{\beta} = \frac{1}{\sqrt{2}}(\alpha - \beta)$$
 
 y-axis
-$$\ket{i} = \frac{1}{\sqrt{2}}(\ket{0} + i\ket{1}),~\ket{-i} = \frac{1}{\sqrt{2}}(\ket{0} - i\ket{1})$$
+$$\ket{i} = \frac{1}{\sqrt{2}}(\ket{0} + i\ket{1}),$$
+$$\ket{-i} = \frac{1}{\sqrt{2}}(\ket{0} - i\ket{1})$$
 $$\tilde{\alpha} \ket{i} + \tilde{\beta} \ket{-i}$$
 $$\tilde{\alpha} = \frac{1}{\sqrt{2}}(\alpha - i\beta),~\tilde{\beta} = \frac{1}{\sqrt{2}}(\alpha + i\beta)$$
 
@@ -137,7 +140,8 @@ probability of measuring eigenvalue $m$ for state $\ket{\psi}$:
 $$p(m) = \bra{\psi} P_m \ket{\psi}$$
 
 probability to measure $\ket{0}$ while being in state $\ket{+}$:
-$$\bra{+} (\ket{0} \bra{0}) \ket{+} = \frac{1}{\sqrt{2}} \begin{pmatrix}1 & 1\end{pmatrix} \begin{pmatrix}1 & 0 \\ 0 & 0\end{pmatrix} \frac{1}{\sqrt{2}} \begin{pmatrix}1 \\ 1\end{pmatrix} = \frac{1}{2}$$
+$$\bra{+} (\ket{0} \bra{0}) \ket{+} = $$
+$$\frac{1}{\sqrt{2}} \begin{pmatrix}1 & 1\end{pmatrix} \begin{pmatrix}1 & 0 \\ 0 & 0\end{pmatrix} \frac{1}{\sqrt{2}} \begin{pmatrix}1 \\ 1\end{pmatrix} = \frac{1}{2}$$
 
 ### D. Density Matrix
 
@@ -149,7 +153,8 @@ $$p = \frac{2}{5} \ket{0} \bra{0} + \frac{3}{5} \ket{1} \bra{1} = \begin{pmatrix
 mixed states are just uncertainty, not a superposition
 
 pure state with same distribution:
-$$p = 1 \cdot \left(\sqrt{\frac{2}{5}} \ket{0} + \sqrt{\frac{3}{5}} \ket{1}\right) \left(\sqrt{\frac{2}{5}} \ket{0} + \sqrt{\frac{3}{5}} \ket{1}\right) = \begin{pmatrix}\frac{2}{5} & \frac{\sqrt{6}}{5} \\ \frac{\sqrt{6}}{5} & \frac{3}{5}\end{pmatrix}$$
+$$p = 1 \cdot \left(\sqrt{\frac{2}{5}} \ket{0} + \sqrt{\frac{3}{5}} \ket{1}\right) \cdot$$
+$$\left(\sqrt{\frac{2}{5}} \ket{0} + \sqrt{\frac{3}{5}} \ket{1}\right) = \begin{pmatrix}\frac{2}{5} & \frac{\sqrt{6}}{5} \\ \frac{\sqrt{6}}{5} & \frac{3}{5}\end{pmatrix}$$
 
 **expected value** $E$ of the measurement w.r.t. an observable $O$ for density matrix $p$:
 $$E = tr(Op)$$
@@ -160,19 +165,20 @@ the **trace** $tr$ of a matrix is defined as the sum of elements on its main dia
 
 there is no permitted operation that allows copying of arbitrary states
 
-from $(\alpha \ket{0} + \beta \ket{1}) \ket{0}$ we want to create $(\alpha \ket{0} + \beta \ket{1}) (\alpha \ket{0} + \beta \ket{1}) = \alpha^2 \ket{00} + \alpha \beta \ket{01} + \alpha \beta \ket{10} + \beta^2 \ket{11}$; with CNOT we can achieve $\alpha \ket{00} + \beta \ket{11}$ but this only matches the desired state for $\alpha = 0 \lor \beta = 0$
+from $(\alpha \ket{0} + \beta \ket{1}) \ket{0}$ we want to create
+$$(\alpha \ket{0} + \beta \ket{1}) (\alpha \ket{0} + \beta \ket{1}) =$$
+$$\alpha^2 \ket{00} + \alpha \beta \ket{01} + \alpha \beta \ket{10} + \beta^2 \ket{11}$$
+with CNOT we can achieve $\alpha \ket{00} + \beta \ket{11}$ but this only matches the desired state for $\alpha = 0 \lor \beta = 0$
 
 ## III. Applying Entanglement
 
 when the resulting state cannot be written as tensor product of qubits
 
 example: Hadamard on first qubit, then CNOT with first qubit as control, leads to **Bell state**
-$$CNOT \otimes (H \otimes I \otimes \ket{00}) = \frac{1}{\sqrt{2}}(\ket{00} + \ket{11}) = \ket{\beta_{00}}$$
-
+$$CNOT \otimes (H \otimes I \otimes \ket{00}) =$$
+$$\frac{1}{\sqrt{2}}(\ket{00} + \ket{11}) = \ket{\beta_{00}}$$
 $$\ket{01} \Rightarrow \ket{\beta_{01}} = \frac{1}{\sqrt{2}}(\ket{01} + \ket{10})$$
-
 $$\ket{10} \Rightarrow \ket{\beta_{10}} = \frac{1}{\sqrt{2}}(\ket{00} - \ket{11})$$
-
 $$\ket{11} \Rightarrow \ket{\beta_{11}} = \frac{1}{\sqrt{2}}(\ket{01} - \ket{10})$$
 
 measurement of the two qubits will be correlated
@@ -216,8 +222,8 @@ there are four measurement bases: A, A', B, B', each obtains an eigenvalue $+1/-
 ![CHSH Inequality](img/chsh_inequality.png)
 
 $$A(B + B') + A'(B - B') = \pm 2$$
-
-$$S = |E(AB) + E(AB') + E(A'B) + E(A'B')| \leq 2$$
+$$S = |E(AB) + E(AB') +$$
+$$E(A'B) + E(A'B')| \leq 2$$
 
 the CHSH inequality is violated with certain states; it disproved Einstein's theory of hidden local variables
 

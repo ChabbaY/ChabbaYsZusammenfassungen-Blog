@@ -1,5 +1,5 @@
 ---
-date: 2026-07-12
+date: 2026-07-16
 author: Linus Englert
 timeline: false
 article: false
@@ -170,10 +170,16 @@ article: false
   - **Bulk-Load**:
     - recursively distributing all known data objects until all leafs are within capacity
     - creates a balanced tree
+
+![kD-Tree](img/kd_tree.png)
+
 - **Quad-Tree**:
   - each inner node has 4 successors (equal parts)
   - not balanced
   - only max capacity
+
+![Quad-Tree](img/quad_tree.png)
+
 - **R-Tree**:
   - uses data partitioning instead of space partitioning: minimal bounding rectangles (MBR)
   - between $m$ and $M$ successors ($m \leq M/2$)
@@ -186,6 +192,9 @@ article: false
       - quantile after $M$ objects in dimension 2
       - create MBR for each cell
       - restart with MBRs or stop if $q < 2$ (root reached)
+
+![R-Tree](img/r_tree.png)
+
 - **Throw-Away Indices**:
   - for highly volatile data: spatial movement of objects leads to huge computational overhead or degenerates data structures
     - changing existing data structure is more expensive than rebuilding with bulk load
@@ -352,7 +361,7 @@ article: false
   - infinite path problem
 - **Depth Limited Search** & **Iterative Deepening**
   - multiple DFS runs with increasing depth limit
-- Informed Search: **A* Search**
+- Informed Search: **A\* Search**
   - heuristic maps current state to estimate of remaining costs / rewards (Best First Search)
   - has lower bound for remaining cost: for less cost no extension is necessary any more
 
