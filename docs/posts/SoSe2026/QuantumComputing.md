@@ -364,20 +364,111 @@ the **Grover diffusion** operator $D_n$ expresses amplitude amplification as a u
 
 ## VIII. Variational Quantum Algorithms (VQAs)
 
+well-suited for **NISQ** (Noisy Intermediate-Scale Quantum) where many required qubits or deep circuits are a problem
+
+**hybrid** approach: also uses classical computation
+
+- quantum computer runs **parametrized quantum circuit**: some gates depend on angles (parameters)
+- classical computer **optimizes** parameters
+- has to be **repeated** many times
+
+key elements:
+
+- **problem encoding**:
+  - defining **cost function**
+  - translating into quantum **operator**
+- **designing quantum circuit**:
+  - parametrized circuit that represents possible solutions
+  - flexible & efficient way to sample from large solution space
+- **classical optimisation**
+  - updating circuit parameters
+  - until cost function converges
+
+### A. Quantum Approximate Optimisation Algorithm (QAOA)
+
+a prominent VQA for **combinatorial optimisation** problems: finding optimal solution in discrete set of all possible solutions
+
+example: **Max-Cut** (dividing graph into two disjoint sets with as many edges in between as possible)
+
+- problem encoding
+  - cost function: binary variables (0/1), max. quadratic terms (no interaction between more than two qubits), constraints possible with penalty terms
+  - formulation as QUBO (Quadratic Unconstrained Binary Optimisation)
+  - 0/1 are replaced with +1/-1 (eigenvalues of Pauli-Z)
+  - reformulate as **Hamiltonian** (matrix acting on quantum states): assigns an energy to each quantum basis state, in this example:
+
+$$H_C = \sum_{(i,j) \in E} \frac{1}{2}(I - Z_i \otimes Z_j)$$
+
+- creating the circuit
+  - **Cost Hamiltonian** ($H_C$): problem encoding
+  - **Mixer Hamiltonian** ($H_M$): drives transitions, e.g. X-Mixer $H_M = \sum_i X_i$
+  - **Variational Parameters** ($\gamma_1, \beta_1, \ldots, \gamma_p, \beta_p$): for each circuit layer how strongly Hamiltonians are applied (adjusted during optimisation)
+  - **Parameter** $p$: depth of circuit (exploration space vs. noise)
+- classical optimisation
+  - **expectation value** (most important quantity): repeatedly measuring the same observables on identically prepared states, weighted sum of all possible measurement results; objective function for classical optimiser
+
 ## IX. Quantum Fourier Transform (QFT)
+
+Fourier Transform is important for modern applications like signal-processing & data compression
+
+the **period finding** algorithm is based on QFT and needed for Shor's algorithm
 
 ### A. Discrete Fourier Transform & Fast Fourier Transform
 
+#### Discrete Fourier Transform (DFT)
+
+$N \times N$ matrix with $N$ distinct entries: complex $N$-th roots of unity
+
+example (4th roots): {1, i, -1, -i} / {$i^0, i^1, i^2, i^3$}, can also be represented as vectors in unit circle (dividing it into $N$ sections):
+
 ![$DFT_4$ Matrix](img/dft4.png)
+
+#### Fast Fourier Transform (FFT)
+
+divide-and-conquer principle: reducing complexity from $O(N^2)$ to $O(N \log_2(N))$
+
+- every second $N$-th root of unity corresponds to a $\frac{N}{2}$-th root of unity
+- recursive approach: executing two matching DFT $_\frac{N}{2}$ instead of one DFT $_N$
 
 ### B. Quantum Fourier Transform
 
+corresponds to DFT but has improved run time
+
+$$QFT_N \ket{j} = \frac{1}{\sqrt{N}} \sum_{k = 0}^{N - 1} \omega_N^{j \cdot k} \ket{k}$$
+
+formula for 3 qubits:
+
+$$QFT_8 = \frac{1}{\sqrt{8}}\left((\ket{0} + \omega_2^j \ket{1}) \otimes (\ket{0} + \omega_4^j \ket{1}) \otimes (\ket{0} + \omega_8^j \ket{1})\right)$$
+
+circuit for 3 qubits:
+
 ![QFT for 3 Qubits](img/qft3.png)
+
+result order is reversed (applying swap-gates)
 
 ### C. Period Finding Algorithm
 
+finding the period of a function e.g. $\sin(x) \rightarrow 2\pi$
+
+conditions (when searching period $r$ in domain $M$):
+
+- function is **bijective** (inevitable condition): values appear only once per period
+- $r$ is a divisor of $M$
+- $M \gg r^2$
+
 ![Period Finding Algorithm](img/period_finding_algorithm.png)
+
+applying the function $U_f$ to a superposition of all possible inputs. After measurement of $\ket{y}$, allnon-zero amplitudes in $\ket{x}$ represent an input for the measured function value; inputs are separated by period $r$
+
+QFT **shifts** the values to $0,~\frac{M}{r},~2 \cdot \frac{M}{r}$ etc.; the measurement yields a multiple of $\frac{M}{r}$ in each run, it is retrieved by **GCD** (greatest common divisor) calculation with high probability, then $r = \frac{M}{\gcd}$
 
 ## X. Shor's Algorithm
 
+### A. RSA
+
+### B. Shor's Algorithm
+
 ## XI. Error Correction & Fault Tolerance
+
+### A. Classical Error Correction
+
+### B. Noise
