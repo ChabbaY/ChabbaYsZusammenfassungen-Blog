@@ -517,6 +517,42 @@ only the period finding is quantum. Everything else can be computed efficiently 
 
 ## XI. Error Correction & Fault Tolerance
 
+qubits may be influenced by the environment or influence each other, rotations may not be exact $\rightarrow$ **quantum noise**
+
+**fault-tolerant** computing is **hard** because:
+
+- measuring a qubit changes its state
+- no-cloning theorem
+- errors are continuous
+
 ### A. Classical Error Correction
 
-### B. Noise
+**channel-model**: $D(N(C(x))) = x$ (encoding $C$, noise $N$, decoding $D$)
+
+#### 3-Bit Repetition Code
+
+$$0 \rightarrow 000,~1 \rightarrow 111$$
+
+assuming that no more than 1 bit was changed by noise:
+$$\{000,001,010,100\} \rightarrow 0$$
+$$\{011,101,110,111\} \rightarrow 1$$
+
+### B. Quantum Error Correction
+
+#### 3-Qubit Bit-Flip Code
+
+![3-Qubit Bit-Flip using syndrome measurements](img/3qubit_bitflip.png)
+
+correction of arbitrary X-errors occuring on a single qubit
+
+#### 3-Qubit Phase-Flip Code
+
+![3-Qubit Phase-Flip](img/3qubit_phaseflip.png)
+
+the hadamard sandwich leads to Z errors being recognized as X errors
+
+#### Shor 9-Qubit Code
+
+![Shor 9-Qubit Code](img/shor_9qubit_code.png)
+
+concatenation of bit- and phase-flip code, protects against arbitrary single qubit errors
