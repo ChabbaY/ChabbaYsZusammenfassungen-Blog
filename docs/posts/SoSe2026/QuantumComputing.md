@@ -556,3 +556,195 @@ the hadamard sandwich leads to Z errors being recognized as X errors
 ![Shor 9-Qubit Code](img/shor_9qubit_code.png)
 
 concatenation of bit- and phase-flip code, protects against arbitrary single qubit errors
+
+## XII. Summarizing Questions
+
+### Linear Algebra of Qubits
+
+qubits, gates, registers, simple circuits, measurement, no-cloning theorem
+
+1. When is an operation called unitary and how to check whether it is?
+    - when the matrix is unitary: if its conjugate transpose is also its inverse ($U \cdot U^\dagger = I$)
+2. Why must operations in quantum circuits be unitary?
+    - they are length-preserving and guarantee a valid quantum state as result
+3. What property of quantum operations can be inferred from the fact that they must be unitary?
+    - they are reversible
+4. Explain the term "superposition".
+    - ability of a system to exist in multiple states simultaneously
+5. Is $\frac{1}{5} \begin{pmatrix}3 \\ 4\end{pmatrix}$ a valid qubit?
+    - $9/25 + 16/25 = 1 \rightarrow$ yes, valid state
+6. Write the $Z$ gate in matrix notation.
+    - $\begin{pmatrix}1 & 0 \\ 0 & -1\end{pmatrix}$
+7. Calculate $CCNOT \ket{111}$ in Dirac notation.
+    - $\ket{110}$
+8. Calculate $(H_2 \otimes I) \ket{001}$.
+    - $\frac{1}{2}(\ket{00} + \ket{01} + \ket{10} + \ket{11}) \ket{1}$
+9. Draw a suitable circuit for question 8.
+10. Draw a circuit for a random number generator.
+11. Explain the meaning of measurement (keywords: basis, change of state, effects of measurement, unitary transformation)
+    - extracting information from a quantum system: in computational basis, the state collapses into the measured one, non-unitary & irreversible: the original superposition is destroyed, losing information, to measure in other bases, a unitary transform has to be applied first
+12. How does measuring a qubit register change the state of the other qubits? (Distinguish between two cases: entangled, unentangled; can of course be generalized)
+    - unentangled qubits are unaffected, entangled ones instantly project into a corresponding definite state
+13. Explain the term "orthonormal basis".
+    - a set of vectors where all vectors are orthogonal (dot product 0) to each other and normalized (length 1)
+14. What does a change of basis mean?
+    - reeriting the description (of a vector) while it remains physically unchanged
+15. Set the state $\frac{1}{\sqrt{3}} \ket{0} + \frac{\sqrt{2}}{\sqrt{3}} \ket{1}$ to the basis $\{\ket{+}, \ket{-}\}$.
+    - $\hat{\alpha} = \frac{1}{\sqrt{2}}(\alpha + \beta) = \frac{1 + \sqrt{2}}{\sqrt{6}},~\hat{\beta} = \frac{1}{\sqrt{2}}(\alpha - \beta) = \frac{1 - \sqrt{2}}{\sqrt{6}}$
+16. What results or effects does a measurement have?
+    - information obtained, qubit collapses to measured state
+17. Why is it difficult to give precise information about the state of an unknown qubit?
+    - measurements are probabilistic & destructive, no-cloning theorem forbids duplication
+18. Compute the density matrix of a given state.
+    - outer product of state vector with its conjugate transpose
+19. What properties does the density matrix have?
+    - **Hermiticity** (its own conjugate transpose, all expectation values and eigenvalues are real), **Unit Trace** (sum of the diagonal is always 1, total probability of all outcomes), **Positive semi-definite** (all eigenvalues non-negative)
+20. Compute the expectation value for a given state and observable.
+    - using the inner product: $\bra{\psi} O \ket{\psi}$
+21. What values can the expected value have?
+    - Any value within the allowed spectrum of the measured observable
+22. What does the no-cloning theorem say?
+    - it is physically impossible to create an identical, independent copy of an arbitrary, unknown quantum state
+23. Why is the no-cloning theorem not a contradiction to the fact that two qubits can be brought into the same state?
+    - multiple qubits can be brought into the same state using the same state preparation
+
+### B. Applying Entanglement
+
+teleportation, dense coding, entanglement swapping
+
+24. Explain the term and meaning of "entanglement".
+    - two or more qubits become so deeply connected that the physical state of one instantly dictates the state of the other, no matter how far apart; they act as a single system
+25. Give an example of an entanglement gate.
+    - CNOT
+26. How can you check whether a state is entangled?
+    - if the state cannot be factored into a tensor product
+27. Why is communication faster than the speed of light not possible despite entanglement?
+    - no-communication theorem: entanglement only creates instantaneous correlation, not active information transfer
+28. Name three protocols or algorithms presented in the lecture in which entanglement plays a role.
+    - E91-protocol, Teleportation, Superdense Coding
+29. What are the Bell states?
+    - four specific, maximally entangled two-qubit quantum states
+30. Draw and explain the teleportation circuit.
+31. What does dense coding do?
+    - Transmit two classical bits with just one qubit
+32. What does the circuit for dense coding look like and what are the requirements?
+33. What is entanglement swapping useful for?
+    - connect two qubits that have never directly interacted
+34. What does the no-communication theorem say?
+    - quantum entanglement cannot be used to transmit classical information faster than the speed of light
+
+### C. Classical vs. quantum computers
+
+toffoli gates, circuit size, complexity, interference
+
+35. Draw a Toffoli gate.
+36. Why is the Toffoli gate important for quantum computing?
+    - it can be used to recreate any classical circuit with just linear overhead
+37. What is the asymptotical size of a quantum circuit when translated from a classical circuit?
+    - $O(n)$
+38. What does it mean to say that a quantum computer can solve an NP problem, that is not in P, in polynomial run time? Why does it not follow that P = NP?
+    - $BQP \neq P$
+39. What is a quantum oracle and how is it different to classical oracle?
+    - blackbox quantum subroutine that evaluates a function, can process inputs in a superposition instead of one at a time
+40. What is interference and how can we use it in combination with quantum oracles?
+    - wave-like phenomenon: probability amplitudes reinforce or cancel out, boosting correct answers, erasing incorrect ones
+41. Which functionality is implemented when surrounding an $X$ gate with a Hadamard sandwich?
+    - Z gate
+
+### D. Quantum Algorithms
+
+#### Problem Solving with a Quantum Advantage
+
+Hadamard-Sandwich, Deutsch, Deutsch-Jozsa, Bernstein-Vazirani, Grover's Algorithm, Oracle
+
+42. Describe the problem of Deutsch. Specify a circuit that can be used to solve the task. How does the solution differ from the classical approach?
+    - determining whether a function is constant or balanced: one oracle call instead of two, using phase kickback; oracle on superposition, Hadamard on first qubit before measuring
+43. Describe the Bernstein-Vazirani problem. Specify a circuit that can be used to solve the task. How does the solution differ from the classical approach?
+    - finding an unknown, secret n-bit binary string hidden in a oracle function: applying oracle to superposition, another Hadamard layer for interference, then measuring: it will be the secret string
+44. Draw the quantum circuit for finding an element with Grover’s algorithm.
+45. Which effect of $U_f$ does Grover use for the search?
+    - using $U_f$ as phase oracle: flipping the phase of solution states
+46. How is this state exploited in the Grover iteration?
+    - using amplitude amplification: the Grover diffusion operator reflects all amplitudes across the mean $\rightarrow$ increases amplitudes of marked states
+47. Explain how the Max-Cut problem was reformulated in the lecture into a problem that can be solved by Grover's algorithm.
+    - mapping graph partitions to binary strings & evaluating whether a cut meets a specific threshold
+48. Create a circuit to represent a graph of your choice as an oracle to solve the Max-Cut problem with Grover.
+
+#### Variational Algorithms (QAOA)
+
+parameterized Quantum Circuit, cost Hamiltonian, mixer Hamiltonian, updating variational parameters
+
+49. What is a hybrid algorithm in the context of quantum computing? Which ones were introduced in the course of the lecture?
+    - combines classical computation (optimizing) with quantum (specific oracle), e.g. QAOA
+50. What are the key steps for creating a variational algorithm?
+    - encoding the problem, defining a cost function, design parametrized circuit, optimizing the parameters
+51. Draw the general circuit for QAOA.
+52. Provide a brief outline of the QAOA procedure, starting from the initial state preparation to the measurement of the final state.
+    - preparing with Hadamard layer (equal superposition), alternate with cost Hamiltonian & mixer Hamiltonian (depending on parameter $p$), classically optimize $\gamma$ & $\beta$, run & measure final circuit lots of times
+53. What are the roles of the Hamiltonians used in QAOA?
+    - Cost Hamiltonian encodes the objective function, Mixer Hamiltonian allows transitions between different basis states
+
+#### QFT
+
+Fourier series, discrete Fourier transform, supporting point representation, QFT, roots of unity, interference
+
+54. Draw the circuit for $QFT_8$.
+55. Describe to what extent $QFT_N$ and Hadamard $H_N$ are similar.
+    - they are both a dicrete linear unitary transform and perform base rotations in Hilbert space, $H$ and $QFT_2$ are identical
+56. Explain under which circumstances the results of $QFT$ and Hadamard are the same and when they are different.
+    - for $QFT_2$ and for unentangled all-zero states they are identical
+
+#### Shor’s Algorithm
+
+period of the modulo function, run time, factorization, IT security, post-quantum cryptography
+
+57. Shor's algorithm: Draw the flowchart.
+58. Which part of Shor’s algorithm is quantum-based?
+    - the period finding algorithm
+59. Draw the quantum circuit for finding the period of a function $f$.
+60. How does Simon's algorithm differ from Shor's algorithm? Describe how the period is found.
+    - Simon's algorithm is designed to find a hidden bitstring while Shor's algorithm is used for factoring large integers but both rely on the same principle: an oracle encodes a phase into an equal superposition; with measuring the result register only inputs to that specific function value have non-zero amplitudes. This structural pattern is turned into a phase shifh by Hadamards (Simon's) or QFT (Shor's)
+61. What are the consequences for IT-security if Shor's algorithm is implementable on real quantum hardware?
+    - cryptography based on prime factorization or discrete logarithms could be broken; "harvest now, decrypt later": post quantum cryptography should already be used
+
+### E. Quantum Key Distribution
+
+BB84 protocol, E91 protocol
+
+62. Draw a circuit that implements BB84/E91.
+63. Briefly explain the purpose of the different measurement bases in E91.
+    - eavesdropper can be found using CHSH inequality
+64. Why is a classical channel necessary for BB84/E91 and which properties does it have to fulfill?
+    - it must be authenticated (prevents MitM), retaining only measurements where bases match
+65. How does the man-in-the-middle attack work for BB84/E91? How can it be detected?
+    - for MitM, the measurement basis would have to be guessed; when comparing results the difference can be observed / for E91 the CHSH inequality is no longer violated
+
+### F. Quantum Error Correction
+
+noise, bit flip, phase flip, syndrome measurement, logical/physical qubits
+
+66. What difficulties must be solved in quantum error correction that do not arise with classical error correction?
+    - errors might be continuous, qubits cannot be cloned and cannot be measured without destroying their state
+67. What are logical and physical qubits and how do they relate to each other?
+    - logical qubits consist of multiple physical qubits: single qubit errors can easily be detected & corrected
+68. Describe the relationship between noise and error correction.
+    - error correction is needed because of noise
+69. What is a syndrome measurement and what is it used for?
+    - ancillas are manipulated & measured $\rightarrow$ determine correction steps; allows to apply error correction without collapsing the ongoing computation
+70. How do we encode a logical qubit in the bit-flip, phase-flip or Shor's 9-qubit code?
+    - mapping physical qubits into logical basis states
+71. Name and explain the similarities/differences of the circuits for bit and phase flip correction.
+    - correction in X/Z basis, Hadamard sandwich to switch between
+72. What is quantum fault tolerance, what is necessary for it?
+    - the ability of a quantum computer to detect and correct errors in real-time, ensuring accurate calculations despite noise; needs Quantum Error Correction (QEC), baseline error rate of qubits must be below threshold, logical operations must be possible also on logical qubits, syndrome measurement for real-time error correction
+
+### G. General Questions
+
+73. Which circuits have you learned about?
+    - Teleportation, Superdense Coding, Entanglement Swapping, BB84/E91, Deutsch, Deutsch-Josza, Grover, QFT, Period Finding, Bit- and Phase-Flip Error Correction
+74. Which gates were introduced?
+    - X, Y, Z, H, CNOT, Toffoli, R
+75. Assess the extent to which quantum computing can play a role in the present (2 aspects).
+    - Quantum Simulations (Chemistry & Materials), Quantum-Enhanced Optimization (Logistics & Finance)
+76. Summarize some of the difficulties in developing a physical quantum computer that you learned about.
+    - qubits are extremely instable (will return to a less energetic state), influences of the environment (like photons) cannot be completely avoided, it is unclear which approach to build qubits will be successfull / the best suited
