@@ -463,9 +463,57 @@ QFT **shifts** the values to $0,~\frac{M}{r},~2 \cdot \frac{M}{r}$ etc.; the mea
 
 ## X. Shor's Algorithm
 
+by Peter Shor (1994): efficient **prime factorization**
+
+it is a threat to many asymmetric cryptography as RSA
+
 ### A. RSA
 
-### B. Shor's Algorithm
+using a **one-way function**: multiplication of large prime numbers
+
+public key $pk$ & secret key $sk$
+
+1. random prime numbers $p$ & $q$
+2. **RSA modulus**: $N = pq$, **Euler's totient function**: $\varphi(N) = (p - 1)(q - 1)$
+3. $pk$ is chosen as coprime to and smaller than $\varphi(N)$
+4. calculate multiplicative inverse $sk$ of $pk$ w.r.t. $\varphi(N)$: $pk \cdot sk \equiv 1 \mod \varphi(N)$ $\rightarrow$ **Euclid's Extended Algorithm**
+
+encrypt with:
+$$c = m^{pk} \mod N$$
+
+decrypt with:
+$$c^{sk} \mod N = m^{pk \cdot sk} \mod N = m$$
+
+the modulus makes it cyclic $\rightarrow$ can be exploited
+
+### B. Euclid's Algorithm
+
+$$\gcd(x,y) = \gcd(y,\text{rem}(x:y))$$
+
+recursively solving simpler problems
+
+until remainder is $0$ (divider found) or $y = 1$ (x and y coprime)
+
+example:
+$$\gcd(72,5) = \gcd(5,\text{rem}(72:5))$$
+$$= \gcd(5,2) = \gcd(2,\text{rem}(5:2))$$
+$$= \gcd(2,1) = 1$$
+
+#### Euclid's Extended Algorithm (EEA)
+
+solving **Bézout's Identity**: $s \cdot x + t \cdot y = \gcd(x,y)$
+
+going backwards through the EA equations and writing the GCD as sum of intermediate results, until a linear combination of $x$ and $y$ is obtained
+
+![Euclid's Algorithms](img/euclids_algorithm.png)
+
+### C. Shor's Algorithm
+
+could also be used for any number (with more than 2 prime factors)
+
+![Shor's Algorithm](img/shors_algorithm.png)
+
+only the period finding is quantum. Everything else can be computed efficiently on classical hardware
 
 ## XI. Error Correction & Fault Tolerance
 
