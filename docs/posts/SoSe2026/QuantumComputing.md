@@ -1,5 +1,5 @@
 ---
-date: 2026-07-19
+date: 2026-07-23
 author: Linus Englert
 timeline: false
 article: false
@@ -590,7 +590,8 @@ qubits, gates, registers, simple circuits, measurement, no-cloning theorem
 14. What does a change of basis mean?
     - reeriting the description (of a vector) while it remains physically unchanged
 15. Set the state $\frac{1}{\sqrt{3}} \ket{0} + \frac{\sqrt{2}}{\sqrt{3}} \ket{1}$ to the basis $\{\ket{+}, \ket{-}\}$.
-    - $\hat{\alpha} = \frac{1}{\sqrt{2}}(\alpha + \beta) = \frac{1 + \sqrt{2}}{\sqrt{6}},~\hat{\beta} = \frac{1}{\sqrt{2}}(\alpha - \beta) = \frac{1 - \sqrt{2}}{\sqrt{6}}$
+    - $\hat{\alpha} = \frac{1}{\sqrt{2}}(\alpha + \beta) = \frac{1 + \sqrt{2}}{\sqrt{6}},$
+    - $\hat{\beta} = \frac{1}{\sqrt{2}}(\alpha - \beta) = \frac{1 - \sqrt{2}}{\sqrt{6}}$
 16. What results or effects does a measurement have?
     - information obtained, qubit collapses to measured state
 17. Why is it difficult to give precise information about the state of an unknown qubit?
