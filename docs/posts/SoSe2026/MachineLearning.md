@@ -150,7 +150,66 @@ nature generates data on manifolds
 
 ## III. Neural Networks & Backpropagation
 
+neural networks work with several **sigmoid basis functions** (multiple perceptrons) but can also perform dimensionality reduction
+
+can approximate **any continuous function** arbitrarily well and scales well with input dimensions
+
+with at least one hidden layer: **Multilayer Perceptron** (MLP)
+
+**Delta-rule** (output weights):
+$$w_{k,h} \leftarrow w_{k,h} + \eta \delta_{i,k} z_{i,h}$$
+where $w_{k,h}$ is the weight from hidden to output and $z$ are the outputs of the hidden layer
+
+**Delta-rule** (input weights):
+$$v_{h,j} \leftarrow v_{h,j} + \eta \delta_{i,h} x_{i,j}$$
+
+huge number of free parameters might lead to **overfitting**, solutions:
+
+- **Regularization**: adding weight decay term
+  - **Cross-entropy Cost Function**
+- **Stopped-Training**: at some time the test error will go up again (overfitting to training data), adaptions should be stopped at the right moment
+  - optimizing learning rate $\eta$: slow convergence vs. oscillation / divergence
+  - Adaptive Moment Estimation (**Adam**): adapting learning rate to progress
+
+dealing with **local optima**
+
+- **Restart**: start with different initial values, take best
+- **Comittee**: train from different initial values, average responses or take majority vote
+  - **Bagging** (Bootstrap Aggregating): comittee with each neural network trained on different bootstrap sample of the training data (comparable to Random Forest for decision trees)
+
 ## IV. Deep Learning
+
+includes any Multi Layer Perceptrons with many hidden layers like
+
+- Recurrent Neural Networks (RNNs)
+- Convolutional Neural Networks (CNNs)
+- Deep Generative Models (VAEs, GANs)
+- Foundation Models (BERT, DALLE, GPT)
+
+and
+
+- Deep Reinforcement Learning
+- Representation Learning
+
+does not need feature engineering or basis function design, works with the data as they are
+
+Recipe:
+
+1. large data set
+    - the data itself describes its complex decision boundaries
+    - 5k labeled examples: acceptable performance, 10 mio labeled examples: potentially already better than a human
+2. neural network with many layers
+    - example: 10 layers, 1000 neurons/layer
+3. using GPUs (optional)
+    - can speed up training as matrix multiplications are being used
+4. train with **SGD**
+    - often regular SGD
+    - **Minibatch SGD**: more than one sample/iteration
+    - **Gradient clipping**: avoids huge update steps
+5. **ReLU** except for output layer
+6. Regularization with **drop-out**
+7. optionally initialize weights with unsupervised learning
+8. for spatial input (e.g. picture): CNN with max-pooling
 
 ## V. Sequential Data: NARX, RNN, LSTM
 
