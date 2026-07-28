@@ -1,5 +1,5 @@
 ---
-date: 2026-07-25
+date: 2026-07-28
 author: Linus Englert
 timeline: false
 article: false
@@ -34,12 +34,18 @@ derivative rules:
 
 ### B. Linear Regression
 
+squared-loss cost function:
+$$\text{cost}(w) = \sum_{i = 1}^{N}(y_i - f_w(x_i))^2$$
+
 **least-squares** solution:
 $$w_{ls} = {(X^T X)}^{-1} X^T y$$
 
 ML as **inverse problem**: forward $w \mapsto y = Xw$, inverse via **Moore-Penrose pseudo inverse** $X^+ = {(X^T X)}^{-1} X^T$
 
 $X^T X$ must be invertible
+
+with weight decay (**Penalized Least Squares** (PLS)):
+$$w_{ls} = {(X^T X + \lambda I)}^{-1} X^T y$$
 
 ### C. Gradient Descent
 
@@ -66,7 +72,42 @@ $$w_j \leftarrow w_j + \eta \left[(y_t - \hat{y_t}) x_{tj} - \frac{\lambda}{N} w
 
 ### D. Perceptron
 
+a linear classifier (the first serious learning machine, 1957)
+
 converges in finitely many steps **if linearly separable** (no convergence for unseparable data e.g. XOR)
+
+steps:
+
+- **training data**: collect, clean, preprocess
+- define **free model parameters** (specific model, e.g. a Perceptron)
+- selecting **cost function** (e.g. misclassifications)
+- **optimizing** the cost function via learning
+
+**net input** (or **pre-activation**):
+$$h(x) = \sum_{j = 0}^{M} w_j x_j$$
+$x_0 = 1$, so $w_0$ is a **bias**
+
+**activation function**:
+$$\hat{y} = \text{sign}(h(x))$$
+where $\hat{y} \in \{1, -1\}$ is the output or **post-activation value** and $h(x) = 0$ the classification boundary (**separating hyperplane**)
+
+**Perceptron Cost Function**:
+$$\text{cost} = -\sum_{i \in M} y_i h(x_i)$$
+where $M \subseteq \{1, \cdots, N\}$ is the index set of currently misclassified patterns
+
+**Perceptron Learning Rule** (pattern-based / stochastic gradient descent):
+$$w_j \leftarrow w_j + \eta y_t x_{t,j}$$
+with $j \in [0,M]$; same sign on $y_t$ (postsynaptic) and $x_{t,j}$ (presenaptic) $\rightarrow$ weight increase, different sign $\rightarrow$ weight decrease
+
+Alternative Learning Rules:
+
+- Optimal separating hyperplanes (Linear Support Vector Machine)
+- Fisher Linear Discriminant
+- Logistic Regression
+
+**Delta-rule** (another form of update):
+$$w_j \leftarrow w_j + \frac{1}{2} \eta (y_t - \hat{y_t}) x_{t,j}$$
+with $j \in [0,M]$
 
 ## II. Basis Functions & Model Complexity
 
