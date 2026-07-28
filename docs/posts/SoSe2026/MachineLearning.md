@@ -111,9 +111,42 @@ with $j \in [0,M]$
 
 ## II. Basis Functions & Model Complexity
 
+in general it is rather unlikely that a true function is linear, often it is also not reasonable to assume that classification boundaries are linear hyperplanes
+
+in a **high-dimensional** space the classification might be linear
+
 ### A. Basis Functions
 
+additional inputs are calculated as deterministic functions
+
+a linear model can be written as a sum of basis functions
+
+**Regularized cost function** with weights as free parameters:
+$$\text{cost}^{pen}(w) = \sum_{i = 1}^{N} \left(y_i - \sum_{m = 1}^{M_\phi} w_m \phi_m (x_i)\right)^2 + \lambda \sum_{m = 1}^{M_\Phi} w_m^2$$
+
+**Penalized least-squares** solution:
+$$\hat{w}_{pen} = \left(\Phi^T \Phi + \lambda I\right)^{-1} \Phi^T y$$
+
+challenge is finding the specific basis functions that make the classes linearly separable
+
+too few (or unsuitable) basis functions do not model the true dependency but many basis functions require many data points to fit all the unknown parameters
+
+**Radial Basis Functions** (RBF), typically Gaussians:
+$$\phi_j(x) = \exp(-\frac{1}{2s^2} \| x - c_j \|^2)$$
+
+in basis function space, data can be on a nonlinear manifold
+
+**Forward Selection** (stepwise increase of model complexity)
+
+- **greedy approach**: each time add basis function that decreases cost the most
+
+**Backward Selection** (stepwise decrease of model complexity (**model pruning**))
+
+- **greedy approach**: each time remove basis function whose removal increases cost the least
+
 ### B. Manifolds
+
+nature generates data on manifolds
 
 ## III. Neural Networks & Backpropagation
 
