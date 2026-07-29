@@ -179,6 +179,8 @@ dealing with **local optima**
 
 ## IV. Deep Learning
 
+### A. General Techniques
+
 includes any Multi Layer Perceptrons with many hidden layers like
 
 - Recurrent Neural Networks (RNNs)
@@ -206,10 +208,42 @@ Recipe:
     - often regular SGD
     - **Minibatch SGD**: more than one sample/iteration
     - **Gradient clipping**: avoids huge update steps
-5. **ReLU** except for output layer
+    - local optima may not be a problem: they may be all very good
+    - Adam is here very popular
+5. **ReLU** (Rectified Linear Unit) except for output layer
+    - no "vanishing gradient" problem $\rightarrow$ faster learning
+    - sparse gradients & sparse solution
+
+![Neural Network Activation Functions](img/neural_functions.png)
+
 6. Regularization with **drop-out**
-7. optionally initialize weights with unsupervised learning
-8. for spatial input (e.g. picture): CNN with max-pooling
+    - for each training instance only 50% of hidden neurons are adapted, for prediction all are used but output weights are multiplied with $1/2$
+    - like committee with shared weights
+    - works better than stopped training
+    - network should be large enough to overfit on data (without drop-out)
+    - variants: dropping input neurons or single connections
+7. Alternative Regulizations
+    - **Weight Regularization**: Weight decay, or better: normalize incoming weight vector
+    - **Batch-Normalization**: fast & stable training, applied on pre-activations (typically)
+    - **Layer Normalization**: also typically on pre-activation
+8. optionally initialize weights with **unsupervised learning**
+    - first layer is initialized with encoder part of autoencoder
+
+### B. CNN
+
+**Convolutional Layer** (weight sharing): filter kernels are applied to the image, padding is necessary
+
+**Pooling Layer** (mean pooling / max pooling): summary statistics of image regions $\rightarrow$ reducing dimensionality, less overfitting
+
+Architectures:
+
+- **AlexNet**: 60 mio. parameters, trained on two GPUs for a week with 1 mio. images
+- Deep Residual Network (**ResNet**): additive nature, direct connections between layers
+- **Regional CNN**: object detection & object segmentation
+
+Adversarial Examples: model behaviour for data away from (training data) manifold is rather unpredictable
+
+Explainability with Heat Maps: getting insights on which image parts were relevant for classification
 
 ## V. Sequential Data: NARX, RNN, LSTM
 
