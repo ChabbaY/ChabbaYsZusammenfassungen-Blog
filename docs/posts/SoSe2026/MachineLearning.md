@@ -1,5 +1,5 @@
 ---
-date: 2026-07-28
+date: 2026-07-30
 author: Linus Englert
 timeline: false
 article: false
@@ -229,7 +229,32 @@ Recipe:
 8. optionally initialize weights with **unsupervised learning**
     - first layer is initialized with encoder part of autoencoder
 
-### B. CNN
+Tools:
+
+- **PyTorch** (2016, now most preferred framework): automatic differentiation (Autograd), dynamic computation graphs, GPU support
+- **JAX**: high-performance numerical computing library
+- **CUDA** (Compute Unified Device Architecture, NVIDIA): direct access to virtual instruction set and memory of the GPU
+- **W&B** (Weights & Biases): orchestrization for many experiments, many hyperparameters, distributed systems & long running jobs
+- **GitHub**: collaboration platform
+
+Milestones:
+
+- 2012 - object recognition: huge improvement with AlexNet (CNN)
+- 2012 - speech recognition: first demonstration by MS
+- 2014 - face recognition: Facebooks Deep Face
+- 2014 - image generation: realistic images with GANs
+- 2015: ResNet
+- 2015: AlphaGo
+- 2016: Neural Machine Translation (NMT)
+- 2017: AlphaZero
+- 2020 - protein structure prediction: AlphaFold by DeepMind
+- 2022: ChatGPT
+
+With over-parametrization the global optima of the cost function are degenerate $\rightarrow$ more volume in parameter space, easier to find by SGD
+
+This "blessing of dimensionality" leads to less required training data for same performance
+
+### B. CNN (Convolutional Neural Network)
 
 **Convolutional Layer** (weight sharing): filter kernels are applied to the image, padding is necessary
 
@@ -243,15 +268,102 @@ Architectures:
 
 Adversarial Examples: model behaviour for data away from (training data) manifold is rather unpredictable
 
-Explainability with Heat Maps: getting insights on which image parts were relevant for classification
+Explainability with **Heat Maps**: getting insights on which image parts were relevant for classification
 
-## V. Sequential Data: NARX, RNN, LSTM
+## V. Time Series & Sequential Data: NARX, RNN, LSTM
 
-### A. NARX
+**Time Series** Modelling: future prediction based on historic data or near-term prediction
 
-### B. RNN
+- predicting future energy consumption
+- predicting stock market
 
-### C. LSTM
+**Sequential** Modelling: inputs & outputs are typically discrete
+
+- classifying sentence sentiment
+- translating a sentence
+
+**Encodings** (for Sequential Data)
+
+- **One-hot** Encoding
+
+$$h_t = \sum_{t' = 1}^{T} v_{t'}, word(t - t')$$
+
+- **Embedding** Encoding: embedding vector $a_i$ of abstract attributes that represent the word
+
+$$h_t = \sum_{t' = 1}^{T} \~V_{t'}, a_{word(t - t')}$$
+
+- Combination of both: matrix $A$ connects one-hot encoded input with the first hidden layer; the $i$-th column in matrix $A$ contains $a_i$
+
+$$h_t = \sum_{t' = 1}^{T} \~V_{t'}, Ay_{t - t'}$$
+
+### A. NARX (Nonlinear Regressive Model with external inputs)
+
+**N**onlinear **A**uto **R**egressive Model with e**x**ternal inputs (or Time-Delay Neural Network (TDNN)): for Time Series Modelling
+
+"convolutional" idea: applying the same neural network in all time instances
+
+**Self-supervised Learning**: the time series provides its own labels
+
+**Residual Modelling**: similarity to ResNet
+
+to be able to use the complete history:
+
+- with internal memory: RNN, LSTM
+- with ability to grow: Transformer
+
+### B. Language Models
+
+predicting the next word out of a vocabulary based on the last $T$ words
+
+$$P(y_t = k | y_{t - 1}, \ldots, y_{t - T}) = \text{softmax}_k\left(w_k^T \text{sig}\left(\sum_{t' = 1}^{T} \~V_{t'} Ay_{t - t'}\right)\right)$$
+
+the embeddings can be trained self-supervised - typically on models like ELMo, BERT, Word2vec and GloVe - and be used in other applications
+
+as embedding vectors represent a meaning, they can be concatenated or added to receive a new embedding vector with different meaning
+
+### C. RNN (Recurrent Neural Network)
+
+powerful method for sequence modelling, has a memory for previous inputs and can consider the whole history
+
+it is a nonlinear state-space model as it also receives input from the previous time step (in the hidden layer)
+
+![Recurrent Neural Network, unfolded in time](img/rnn.png)
+
+**Backpropagation through time** (BPTT): SGD but also backward in time (typically truncated, otherwise back to $t = 1$)
+
+#### Echo State Network
+
+randomly initialized, only output weights are trained (simple rules for linear regression / classification)
+
+#### Bidirectional RNN
+
+predictions depend on past and future inputs, useful for **sequence labelling problems** as handwriting recognition, speech recognition, $\ldots$
+
+![Bidirectional RNN](img/bidirectional_rnn.png)
+
+### D. LSTM (Long Short-Term Memory)
+
+addresses the **vanishing gradient problem** of RNNs: they have difficulties remembering important information far in the past
+
+the LSTM uses **Gates** to turn on and off individual LSTM units, also has skip connections similar to ResNet
+
+![LSTM without the gates](img/lstm.png)
+
+very successful on reading handwritten text, also used for speech recognition, robot control, time series prediction, rhythm learning, music composition, grammar learning, human action recognition, protein homology detection
+
+**no transfer learning** possible $\rightarrow$ needs large data set for any new problem
+
+### E. Encoder-Decoder Networks
+
+basis for Neural Machine Translation (NMT)
+
+![Encoder-Decoder Network](img/encoder_decoder.png)
+
+**Encoder**: RNN (often LSTM) with no outpup layer
+
+**Decoder**: initialized with encoder vectors, finding the most likely decoded sequence of words
+
+NMT has only a small memory footprint compared to standard MT (no gigantic phrase tables)
 
 ## VI. Attention & Transformer
 
