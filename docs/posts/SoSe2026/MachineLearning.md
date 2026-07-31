@@ -1,5 +1,5 @@
 ---
-date: 2026-07-30
+date: 2026-07-31
 author: Linus Englert
 timeline: false
 article: false
@@ -290,11 +290,11 @@ $$h_t = \sum_{t' = 1}^{T} v_{t'}, word(t - t')$$
 
 - **Embedding** Encoding: embedding vector $a_i$ of abstract attributes that represent the word
 
-$$h_t = \sum_{t' = 1}^{T} \~V_{t'}, a_{word(t - t')}$$
+$$h_t = \sum_{t' = 1}^{T} \tilde{V}_{t'}, a_{word(t - t')}$$
 
 - Combination of both: matrix $A$ connects one-hot encoded input with the first hidden layer; the $i$-th column in matrix $A$ contains $a_i$
 
-$$h_t = \sum_{t' = 1}^{T} \~V_{t'}, Ay_{t - t'}$$
+$$h_t = \sum_{t' = 1}^{T} \tilde{V}_{t'}, Ay_{t - t'}$$
 
 ### A. NARX (Nonlinear Regressive Model with external inputs)
 
@@ -366,6 +366,45 @@ basis for Neural Machine Translation (NMT)
 NMT has only a small memory footprint compared to standard MT (no gigantic phrase tables)
 
 ## VI. Attention & Transformer
+
+Using **attention**, models can learn alignments between different modalities, e.g. image objects & agent actions (dynamic control), speech frames & text (speech recognition), image features & image description (image caption genertion)
+
+### A. Attention
+
+attention-based NMT models are superior, it is the basis for state of the art machine translation and context sensitive embedding models
+
+![Attention](img/attention.png)
+
+additional layer on encoder-decoder network, provides information about the top embeddings to the decoder (without overfitting)
+
+**Self-Attention**: can be applied to any layer & provides memoryless modelling of far-range dependencies, can replace convolutional or recurrent layers
+
+![Comparison of Network Architectures](img/network_comparison.png)
+
+- **Feed forward**: all embeddings are independent
+- **Fully connected**: all embeddings are considered, huge number of parameters $\rightarrow$ not used in practice
+- **Convolutional layer**: very powerful & successful in NLP, needs zero padding at sentence boundaries
+- **Recurrent neural networks**: very powerful & successful in NLP, usually LSTM units
+- **Bidirectional recurrent neural network**
+
+### B. Transformer
+
+A transformer consists of many time steps and many layers (ResNet layers)
+
+Attention is added on pre-activation like:
+$$x_t \leftarrow \text{LayerNorm}(x_t + \text{AttentOut}(x_t))$$
+
+![Single-Head Attention](img/single_head_attention.png)
+
+### C. GPT: Decoder Only
+
+Generative Pre-trained Transformer (**GPT**): a large language model (LLM)
+
+A decoder that is initialized with the prompt
+
+**Tokenization**: most words encoded as single token, rare words may be a sequence of a few tokens
+
+### D. BERT: Encoder Only
 
 ## VII. Advancing LLMs: Fine-tuning, LoRA, RL
 
