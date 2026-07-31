@@ -636,11 +636,72 @@ Agents differ by:
 
 ### A. Generating Images
 
+From a class label (e.g. "dog") to many outputs (pixels)
+
+The average image of a dog is pretty blurry & useless, there are many potential images of a dog (manifold of images)
+
+Features are like basis functions but supplied by nature or an application expert (**feature engineering**)
+
+approximate inverse of feature map:
+$$h = g^{enc}(x)$$
+
+$h$ is called **latent vector** in a latent space as it cannot be measured directly
+
 ### B. Autoencoder
 
-### C. VAE
+![Autoencoder](img/autoencoder.png)
+
+encoder & generator / decoder are concatenated:
+$$\hat{x} = g^{gen}(g^{enc}(x))$$
+
+cost function of neural network autoencoder:
+$$cost(W, V) = \sum_{i = 1}^{N} \sum_{j = 1}^{M} (x_{i,j} - \hat{x}_{i,j})^2$$
+
+if $h$ was gaussian distributed, we would have a perfect generator: a random $h$ would return a valid image; this is not the case $\rightarrow$ VAE will be better
+
+**Denoising Autoencoder** (DAE): random noise added to input, prevents autoencoder from learning an identity function
+
+![Denoising Autoencoder](img/denoising_autoencoder.png)
+
+Requirements on a good generator:
+
+1. No manifold in $h$-space (any random $h$ gives a valid image)
+2. Smoothness: close vectors should produce similar images
+3. Disentanglement: $h$ has semantic, dimensions may have a meaning
+4. Conditional models: the generated image has real features (smiling face, beard, glasses, $\ldots$)
+
+### C. VAE (Variational Autoencoder)
+
+![Variational Autoencoder with the multivariate Gaussian assumption](img/vae.png)
+
+The VAE is not perfect, an **evaluator** can help & select the best out of a set of generated images
 
 ### D. GAN
+
+A **generator** generates images from a latent random variable
+
+A **discriminator** separates training data & generated data
+
+Both are trained jointly until the discriminator cannot separate training data from generated data anymore
+
+Cross-entropy cost function (minimized by discriminator, maximized by generator):
+$$\text{cost}(w,v) = -\sum_{i:x_i \in \text{train}} \log g^{dis}(x_i, w) - \sum_{i':x_i \in \text{gen}} \log [1 - g^{dis}(g^{gen}(h_{i'}, v), w)]$$
+
+**Minimax** solution of a two-player zero-sum game
+
+**DCGAN** (Deep Convolutional GAN):
+
+- with convolutional layers and transposed convolutional layers ("deconvolution", also a convolution, no inverse)
+
+**cGAN** (Conditional GAN):
+
+- class / attribute label as additional input to both generator & discriminator
+- text-to-image ("reverse captioning"), image editing, image-to-image
+
+**CycleGAN**:
+
+- example task: turn horses into zebras
+- two discriminators, trained with the adversarial loss
 
 ## IX. Diffusion & Flow Matching
 
