@@ -599,16 +599,57 @@ for complex logic, mathematics and step-by-step problem solving
 
 ### F. Agentics & Execution
 
+**Agentic AI**: AI that can autonomously pursue goals by reasoning, planning, taking actions, using tools, interacting with environment & maintaining memory over multiple steps
+
+in contrast to a classical LLM it is proactive and goal-driven
+
+core components:
+
+- **Goals**: explicit objectives defined by the user or the system (fix bug, analyze dataset, book flight)
+- **Observation & Feedback**: examine results (succeeded, needs adjustment, failed)
+- **Reasoning**: think about intermediate states, alternative solutions (CoT, ToT, self-consistency, verification, search, reflection)
+- **Planning**: define sub-tasks & execution order
+- **Actions / Tool Use**: interacting with environment (APIs, code execution, browser, database, theorem prover, other models)
+  - **Model Context Protocol** (MCP): connecting LLMs to external systems, analogue to USB for hardware
+- **Structured Outputs** (JSON): statistically easy to learn, enforced by modern systems, common API output
+- **Memory**: RAG, MemGPT, Memory-R1
+- **Reflection & Verification**: iterative refinement: generate $\rightarrow$ critique $\rightarrow$ revise $\rightarrow$ verify
+- typical architecture: goal $\rightarrow$ planner $\rightarrow$ reasoner $\rightarrow$ tool executor $\rightarrow$ observation $\rightarrow$ memory $\rightarrow$ reflection $\rightarrow$ replanning
+
+**ReAct**: paper by Google that proposed interleaving reasoning & environment interaction
+
+- Thought (Reasoning): CoT
+- Action (Acting): tool
+- Observation (Feedback)
+- Repeat
+
 ### G. Multi-Agentic AI
+
+Agents differ by:
+
+1. **Prompting** (most common): different roles (Planner, Researcher, Critic, Programmer)
+2. **Tools**: web search, coding sandbox, theorem prover, $\ldots$
+3. **Memories**: graph, documents, code repository, evaluation history
+4. **Models**: may be specialized on a task
 
 ## VIII. Generative Models: AE, VAE, GAN
 
-### A. Autoencoder
+### A. Generating Images
 
-### B. VAE
+### B. Autoencoder
 
-### C. GAN
+### C. VAE
+
+### D. GAN
 
 ## IX. Diffusion & Flow Matching
 
-## X. Summary
+### A. Probability & Sampling
+
+### B. DDPM
+
+### C. Flow Matching
+
+## X. Multi Modality
+
+## XI. Summary
