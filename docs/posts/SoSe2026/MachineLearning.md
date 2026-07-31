@@ -377,7 +377,7 @@ attention-based NMT models are superior, it is the basis for state of the art ma
 
 additional layer on encoder-decoder network, provides information about the top embeddings to the decoder (without overfitting)
 
-**Self-Attention**: can be applied to any layer & provides memoryless modelling of far-range dependencies, can replace convolutional or recurrent layers
+**Self-Attention**: can be applied to any layer & provides memoryless modelling of far-range dependencies, can replace convolutional or recurrent layers, enables highly parallel training on massive datasets & unprecedented model scaling
 
 ![Comparison of Network Architectures](img/network_comparison.png)
 
@@ -404,9 +404,137 @@ A decoder that is initialized with the prompt
 
 **Tokenization**: most words encoded as single token, rare words may be a sequence of a few tokens
 
+Attention is masked to previous tokens only
+
+Softmax is applied: sampling from tokens with maximum activity
+
+Two directions of reasoning: left to right (RNN) and also bottom to top (all ResNet layers)
+
+Early layers: lexical & local syntax, Middle layers: factual retrieval & abstraction, Late layers: task execution & response generation
+
+GPT-style models demonstrated that a single model can generalize across a wide range of tasks with little or no task-specific training
+
+#### Prompt Engineering
+
+Refining & designing inputs to an AI model so it produces more accurate, useful and reliable outputs
+
+Useful Context:
+
+- **Role Assignment**: who should answer?
+- **Constraints**: what is allowed?
+- **Examples**: what is a good answer?
+- **Structure**: how is a good answer?
+
+#### Hallucination
+
+An inherent property of current LLMs but the severity can be greatly reduced e.g. with external memory (RAG)
+
 ### D. BERT: Encoder Only
 
+Bidirectional Encoder Representations from Transformers (**BERT**) by Google: using attention & transformer to learn word contextual relations using a masked language model (**MLM**)
+
+mainly used to calculate **context sensitive embeddings**, encoder-only as it is not a generative model
+
+some tokens of the input sentence are removed (masked) and the model is trained to predict the corresponding tokens at the output layer
+
+### E. Key-value Caching
+
+performance optimization for transformer-based models like GPT to make text generation much faster
+
+tokens are processed one by one, for each attention is calculated for all previous tokens. KV caching removes the necessarity to recompute every time
+
+cache can be larger than the model itself $\rightarrow$ cache management is very important for modern AI applications
+
 ## VII. Advancing LLMs: Fine-tuning, LoRA, RL
+
+### A. Model Preparation
+
+**Fine-tuning**: Domain Adaption (e.g. Medical)
+
+- starting from pretrained LLM, train with domain-specific data
+- with "aggressive adaption" the original context could be forgotten
+- **Instruction Fine Tuning** (IFT): training with instruction-response pairs, can improve usability as an assistant, often unlocks existing capabilities
+- **Supervides Fine Tuning** (SFT): training with instruction-response pairs, base for IFT
+
+**LoRA** (Low-Rank Adaption):
+
+- **Parameter-Efficient Fine-Tuning** (PEFT) method
+- base model is freezed & only tiny fraction of adapter weights are trained $\rightarrow$ fast & cheap customization, can be easily undone
+- only a correction is learned:
+
+$$W' = W + BA$$
+
+- best performance if applied to all projection matrices in all layers
+- can also be used at query time: selecting one (user) or having multiple simultaneously
+
+**Knowledge Distillation**: enhancing performance of smaller models by transferring knowledge from larger models
+
+**Alignment**: making an LLM behave consistent with human intentions, preferences, values & safety requirements
+
+usually multiple alignment approaches are combined: preference optimization, safety tuning, **constitutional AI** (revising its own outputs based on explicit principles), **red teaming** (stress-testing by intentionally trying to make it fail or misbehave)
+
+**RLHF** (Reinforcement Learning from Human Feedback)
+
+- important alignment method, using human preference judgements to improve model behaviour
+- SFT followed by Reinforcement Learning
+- multiple model responses are compared, rewards from human annotators
+- used algorithms:
+  - **PPO** (Proximal Policy Optimization)
+    - classical actor-critic algorithm
+    - used less today: computationally expensive, can be unstable
+  - **DPO** (Direct Preference Optimization)
+    - extremely effective algorithm
+    - no absolute reward, only preferences (no reinforcement learning)
+  - **GRPO** (Group Relative Policy Optimization)
+    - RL with rewards but no critic
+    - multiple answers are judged relative to each other
+    - avoids the cost & instability of training a critic
+  - REINFORCE
+    - used by PPO & GRPO
+    - similar to supervised learning
+    - training data are generated by current policy: **on-policy**
+
+**RLAIF** (Reinforcement Learning from AI Feedback)
+
+### B. Mixture of Experts (MoE)
+
+A FFN is replaced by several FFNs and a **gating network** (determines which experts are being active)
+
+can lead to a large number of total parameters to train but in prediction leads to a better performance
+
+### C. LLM Systems
+
+#### Scaffolding
+
+orchestration layer, manages the LLMs interaction with memory, tools and other components
+
+- building prompts
+- maintaining state & memory
+- calling tools
+- planning
+- multi-step workflows
+- verifying outputs
+- coordinating multiple LLM calls
+
+#### Tags
+
+tokens or structured markers that carry metadata or control information
+
+- for the LLM: how to interpret a text (role)
+- for the scaffolding: how to process a text (where to display)
+- usually automatically inserted by scaffolding
+- for tool calls: generated by LLM, what tool, which parameters (the LLM itself cannot call tools)
+- they have a semantic meaning
+
+### D. Long-context & Memory-augmented Models
+
+overcoming standard token limits and giving access to external or historical data
+
+### E. Reasoning & Advanced Problem Solving
+
+### F. Agentics & Execution
+
+### G. Multi-Agentic AI
 
 ## VIII. Generative Models: AE, VAE, GAN
 
