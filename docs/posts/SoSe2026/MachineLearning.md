@@ -530,7 +530,72 @@ tokens or structured markers that carry metadata or control information
 
 overcoming standard token limits and giving access to external or historical data
 
+**Sparse Attention**: Longformer (Long Document Transformer)
+
+- processing very long sentences efficiently
+- sparse attention (nearby tokens, sliding window, $\ldots$) instead of self-attention
+
+**Retrieval Augmented Generation** (**RAG**):
+
+- augments LLM with external memory, relevant documents are retrieved in inference time
+- (external) form of **test-time compute** (TTC)
+- each document & the query obtains an **embedding vector**
+- the documents with the smallest distance between document embedding & query embedding are found (cosine distance), their content is added to the prompt
+- OpenAI has a suitable embedding API
+
+**GraphRAG**:
+
+- knowledge is a graph, not text junks
+- natural language questions have to be translated into formal graph queries
+
+**MemGPT**: manages memory like an OS
+
+**Memory-R1**: one step further than MemGPT (more distinct memory types)
+
 ### E. Reasoning & Advanced Problem Solving
+
+for complex logic, mathematics and step-by-step problem solving
+
+**Large Reasoning Model** (LRM): often using explicit reasoning signals during training
+
+- long-horizon reasoning, verification-aware outputs
+- example: DeepSeek-R1 creates detailed reasoning chains
+
+**Chain-of-Thought (CoT) Reasoning**:
+
+- CoT prompting: LLM is encouraged to break down complex problem into intermediate steps, CoT is an output format, not a cognitive process
+- more tokens are generated & processed $\rightarrow$ incraesing test-time compute (TTC)
+
+**RL for Reasoning**:
+
+- Reinforcement Learning with Verifiable rewards (**RLVR**) with GRPO
+- can have:
+  - Outcome Reward Model (**ORM**): evaluates final answer
+  - Process Reward Model (**PRM**): evaluates each reasoning step
+
+**Reasoning Distillation**: imitating reasoning behaviour of a stronger teacher model
+
+**Test-Time Compute** (TTC):
+
+- LLMs cannot improve further with more text
+- improving output quality by extra compute power during inference (thinking / planning)
+
+**Test-Time Reasoning** (TTR):
+
+- specific TTC: only reasoning
+- CoT, ToT (Tree-of-Thoughts)
+
+**Test-Time Training** (TTT):
+
+- closely related to online learning
+- parameters can be updated during deployment from new data, feedback or interactions
+
+**Test-Time-Adaption** (TTA):
+
+- specific TTT: adaption to distribution shifts (e.g. new domain, lighting conditions, environment, $\ldots$)
+- using self-supervised or unsupervised objectives
+
+**ATLaS** (Agent Tuning via Learning Critical Steps): focusing only on most important parts of expert behaviour
 
 ### F. Agentics & Execution
 
