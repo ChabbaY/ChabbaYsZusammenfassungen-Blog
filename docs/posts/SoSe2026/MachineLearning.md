@@ -707,10 +707,120 @@ $$\text{cost}(w,v) = -\sum_{i:x_i \in \text{train}} \log g^{dis}(x_i, w) - \sum_
 
 ### A. Probability & Sampling
 
-### B. DDPM
+Important Rules:
+
+- Chain rule:
+
+$$P(x_1, \ldots, x_M) = P(x_1)P(x_2|x_1)\ldots$$
+
+- Bayes' theorem:
+
+$$P(x|y) = \frac{P(y|x)P(x)}{P(y)}$$
+
+Sampling a Gaussian ($\epsilon' = \mu + \sigma\epsilon$):
+$$P(y|x) = \mathcal{N}(y; f(x), \sigma^2) \Rightarrow y^s = f(x) + \sigma\epsilon$$
+
+### B. DDPM (Denoising Diffusion Probabilistic Model)
+
+**Forward Noising Process**: a Markov Chain (MC), result is an image consisting of independent Gaussian noise
+
+- pixels act independently
+
+**Backward Denoising Process**: MC from end to beginning, not the inverse of Noising, produces new images of the image distribution, connection is Bayes
+
+- each pixel depends on all pixels
+- noise is injected in every step, with decraesing amplitude
+
+**Stable Diffusion** model / latent diffusion model (LDM): diffusion in the latent space of a pretrained, frozen VAE
+
+- with a bit larger latent dimension it is easier for the decoding net $\rightarrow$ natural images will be manifold in latent space $\rightarrow$ can be modelled well by diffusion
+
+**Conditional Stable Diffusion**: cross attention in the U-net $\rightarrow$ the low-resolution layer has semantic meaning & can be manipulated
+
+- Concept interpolation: concept vector (male, female, running, glasses, $\ldots$)
+
+**Denoising Diffusion Implicit Model** (DDIM): deterministic reverse
+
+**Diffusion Transformer** (DiT): a transformer replaces the U-net
+
+Diffusion can be applied to anything, not just images
 
 ### C. Flow Matching
 
+training method for continuously normalizing flows, learns a deterministic velocity field transporting a simple distribution like Gaussian to a data distribution
+
+- complementary to diffusion
+- fewer inference steps but more sensitive to modelling errors
+- diffusion models dominate high-fidelity image, audio and multimodal generation; flow matching excels in trajectory generation, robotics, motion and real-time systems
+- has with diffusion the highest image quality but is "less creative"
+
 ## X. Multi Modality
 
+combination of text, vision, audio, video & action $\rightarrow$ grounded understanding, richer interactions & real-world intelligence
+
+communication via **embedding vectors** (not text tokens)
+
+**Vision Language Models** (VLM):
+
+- visual concepts & language concepts
+- example: image captioning
+- understanding charts, documents, UI
+
+**Multimodal LLM** (MLLM):
+
+- LLM at core: reasoning, instruction following, open-ended text generation
+- the dominant paradigm today
+
+Text2Image, Video2Text (Video Q&A), Text2Video (Sora by OpenAI)
+
+**Vision-Language-Action** (VLA):
+
+- mapping visual observations & language instructions to executable actions
+- embodied & interactive AI systems
+- benchmark OpenEQA: how well can AI understand physical, 3D environments
+
+It combines contrastive learning, cross-attention, unified transformers, generative modelling & action learning
+
+**Vision Transformer** (ViT)
+
+- image as sequence of patches (with positional encoding)
+- self-attention instead of convolution
+- strong performance on large data sets
+- very few text-annotated images $\rightarrow$ self-supervised learning
+  - Masked Autoencoder (MAE): hiding many patches, model should reconstruct
+
+**Contrastive Learning**: pulling together related examples & pushing apart unrelated examples in embedding space
+
+- **Augmentation**: creating modified version of an image while preserving its semantic identity (crop, resize, flip, brightness, contrast, rotation, noise, $\ldots$)
+- **SimCLR** (Simple Framework for Contrastive Learning of Visual Representations)
+
+Joint-Embedding Predictive Architecture (**JEPA**): trains a system to predict latent states of unobserverd or future parts of the world from currently observed context $\rightarrow$ attractive for world models
+
+**World Models**: let AI imagine the future by learning how the world evolves
+
+- LRMs in combination with simulation: imagine, predict & evaluate possible futures
+
+Contrastive Language Image Pretraining (**CLIP**):
+
+- learns joint embedding space for images & text
+- supports zero-shot classification
+
+**Fusion**: one modality attends to another (cross-attention, encoder-decoder transformer)
+
+- **Projector**: maps features from one modality into the shared representation space of another modality (usually an LLM)
+  - Linear Projector: single matrix multiplication, fast & simple
+  - often: freeze encoders & only train projectors
+
+Images are not the most difficult generative AI, they are visually immediate but:
+
+- video has additional dimension of temporal consistency
+- code & math have zero tolerance for error
+- 3D assets have to look good from every possible angle and with different lighting
+
 ## XI. Summary
+
+**Gradient**: the one thing all AI build upon
+
+**Complexity**: dimensionality (blessing / curse), parameters, manifolds
+
+**Skip Connections & Residuals** everywhere
